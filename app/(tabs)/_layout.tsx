@@ -1,12 +1,13 @@
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Tabs } from "expo-router";
+import { Tabs } from "expo-router/tabs";
 import { Text } from "react-native";
 
 export default function TabLayout() {
 	return (
 		<Tabs
+			initialRouteName="home"
 			sceneContainerStyle={{
 				backgroundColor: Colors.light.background,
 			}}
@@ -15,17 +16,8 @@ export default function TabLayout() {
 				tabBarItemStyle: {
 					backgroundColor: Colors.dark.background,
 				},
-				tabBarShowLabel: false,
 				headerTitleAlign: "center",
 				headerShadowVisible: false,
-				tabBarStyle: {
-					// backgroundColor: Colors.light.background,
-					backgroundColor: "red",
-					height: 60,
-					shadowOpacity: 0,
-					elevation: 0,
-					borderTopWidth: 0,
-				},
 				headerTitle: (props) => (
 					<Text
 						{...props}
@@ -34,10 +26,17 @@ export default function TabLayout() {
 						Vine Music
 					</Text>
 				),
+				tabBarShowLabel: false,
+				tabBarStyle: {
+					height: 60,
+					shadowOpacity: 0,
+					elevation: 0,
+					borderTopWidth: 0,
+				},
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="home"
 				options={{
 					tabBarIcon: ({ color }) => (
 						<MaterialIcons size={28} name="home" color={color} />
