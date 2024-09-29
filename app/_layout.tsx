@@ -2,14 +2,9 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { type StyleProp, Text, type ViewStyle } from "react-native";
 import { Font } from "@/constants/Font";
 
 SplashScreen.preventAutoHideAsync();
-
-const defaultStyle: StyleProp<ViewStyle> = {
-	backgroundColor: "#fff",
-};
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
@@ -30,21 +25,13 @@ export default function RootLayout() {
 	}
 
 	return (
-		<Stack
-			screenOptions={{
-				headerTitleAlign: "center",
-				headerShadowVisible: false,
-				headerTitle: (props) => (
-					<Text
-						{...props}
-						style={{ fontSize: 24, fontFamily: "Jungle-Regular" }}
-					>
-						Vine Music
-					</Text>
-				),
-			}}
-		>
-			<Stack.Screen name="index" options={{ contentStyle: defaultStyle }} />
+		<Stack screenOptions={{ contentStyle: { backgroundColor: "red" } }}>
+			<Stack.Screen
+				name="(tabs)"
+				options={{
+					headerShown: false,
+				}}
+			/>
 		</Stack>
 	);
 }
