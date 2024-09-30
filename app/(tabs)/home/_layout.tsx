@@ -1,8 +1,7 @@
 import header from "@/components/header";
 import { Colors } from "@/constants/Colors";
-import { Font } from "@/constants/Font";
 import { Stack } from "expo-router/stack";
-import { Pressable, Text } from "react-native";
+import { Pressable } from "react-native";
 
 export default function StackLayout() {
 	return (
