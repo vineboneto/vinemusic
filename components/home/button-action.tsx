@@ -3,7 +3,12 @@ import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
-export function ButtonActionsGroup() {
+type Props = {
+	openFilter: () => void;
+	openReport: () => void;
+};
+
+export function ButtonActionsGroup({ openFilter, openReport }: Props) {
 	return (
 		<View style={styles.content}>
 			<Pressable
@@ -12,10 +17,10 @@ export function ButtonActionsGroup() {
 			>
 				<Feather name="plus" color={Colors.light.icon} size={35} />
 			</Pressable>
-			<Pressable style={styles.button}>
+			<Pressable style={styles.button} onPress={() => openFilter()}>
 				<Feather name="filter" color={Colors.light.icon} size={35} />
 			</Pressable>
-			<Pressable style={styles.button}>
+			<Pressable style={styles.button} onPress={() => openReport()}>
 				<Feather name="file-text" color={Colors.light.icon} size={35} />
 			</Pressable>
 		</View>

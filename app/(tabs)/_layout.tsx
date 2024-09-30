@@ -1,8 +1,7 @@
+import header from "@/components/header";
 import { Colors } from "@/constants/Colors";
-import { Font } from "@/constants/Font";
 import Feather from "@expo/vector-icons/Feather";
 import { Tabs } from "expo-router/tabs";
-import { Text } from "react-native";
 
 export default function TabLayout() {
 	return (
@@ -16,7 +15,7 @@ export default function TabLayout() {
 				tabBarItemStyle: {
 					backgroundColor: Colors.dark.background,
 				},
-				headerShown: false,
+
 				tabBarShowLabel: false,
 				tabBarStyle: {
 					height: 60,
@@ -29,6 +28,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="home"
 				options={{
+					headerShown: false,
 					tabBarIcon: ({ color }) => (
 						<Feather size={28} name="home" color={color} />
 					),
@@ -37,6 +37,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="profile"
 				options={{
+					...header,
 					tabBarIcon: ({ color }) => (
 						<Feather size={28} name="user" color={color} />
 					),
@@ -45,6 +46,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="info"
 				options={{
+					...header,
 					tabBarIcon: ({ color }) => (
 						<Feather size={28} name="info" color={color} />
 					),

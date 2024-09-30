@@ -3,6 +3,8 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Font } from "@/constants/Font";
+import { AlertNotificationRoot } from "react-native-alert-notification";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,8 +28,11 @@ export default function RootLayout() {
 	}
 
 	return (
-		<Stack screenOptions={{ headerShown: false }}>
-			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-		</Stack>
+		<AlertNotificationRoot>
+			<StatusBar translucent />
+			<Stack screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+			</Stack>
+		</AlertNotificationRoot>
 	);
 }
