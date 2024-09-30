@@ -16,9 +16,12 @@ export default function StackLayout() {
 			}}
 		>
 			<Stack.Screen name="index" />
+			<Stack.Screen name="music/edit" />
+			<Stack.Screen name="music/end" />
 			<Stack.Screen name="music/new" />
-			<Stack.Screen name="music/view" />
+			<Stack.Screen name="music/report" />
 			<Stack.Screen name="music/timer" />
+			<Stack.Screen name="music/view" />
 		</Stack>
 	);
 }
