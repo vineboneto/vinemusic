@@ -24,6 +24,7 @@ export default function StackLayout() {
 			}}
 		>
 			<Stack.Screen name="index" />
+			<Stack.Screen name="music/new" />
 			<Stack.Screen name="music/view" />
 		</Stack>
 	);
