@@ -10,7 +10,7 @@ export default function Index() {
 			style={{
 				flex: 1,
 				marginHorizontal: 20,
-				marginTop: 60,
+				marginTop: 20,
 				rowGap: 20,
 			}}
 		>

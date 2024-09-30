@@ -21,6 +21,8 @@ export const Colors = {
 			},
 			container: {
 				default: "black",
+				sucess: "#008000",
+				danger: "#FF0000",
 			},
 		},
 	},

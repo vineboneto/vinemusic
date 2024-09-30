@@ -19,6 +19,7 @@ export function Select({ value, onChange, options, placeholder }: Props) {
 				backgroundColor: Colors.light.input,
 				width: "100%",
 				borderRadius: 8,
+				height: 55,
 			}}
 		>
 			<Picker

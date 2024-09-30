@@ -1,5 +1,6 @@
 import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
+import { formatDate } from "@/utils";
 import { router } from "expo-router";
 import { Text, View } from "react-native";
 
@@ -9,7 +10,6 @@ export default function Index() {
 			style={{
 				flex: 1,
 				marginHorizontal: 20,
-				marginTop: 60,
 				rowGap: 20,
 			}}
 		>
@@ -21,18 +21,10 @@ export default function Index() {
 
 			<View style={{ rowGap: 10 }}>
 				<Text style={{ fontSize: 24, fontFamily: Font.InterRegular }}>
-					Início:{" "}
-					{new Date().toLocaleString("pt-BR", {
-						dateStyle: "short",
-						timeStyle: "short",
-					})}
+					Início: {formatDate(new Date())}
 				</Text>
 				<Text style={{ fontSize: 24, fontFamily: Font.InterRegular }}>
-					Fim:{" "}
-					{new Date().toLocaleString("pt-BR", {
-						dateStyle: "short",
-						timeStyle: "short",
-					})}
+					Fim: {formatDate(new Date())}
 				</Text>
 			</View>
 			<View

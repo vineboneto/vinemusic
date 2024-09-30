@@ -20,7 +20,7 @@ export default function Index() {
 				flex: 1,
 				marginHorizontal: 20,
 				rowGap: 20,
-				marginTop: 60,
+				marginTop: 20,
 			}}
 		>
 			<Select
