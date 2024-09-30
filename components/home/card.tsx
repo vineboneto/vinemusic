@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
+import { formatText, formatTime } from "@/utils";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -29,22 +30,6 @@ export function Card({ status, title, timeInMinutes }: Props) {
 		);
 	}
 
-	function formatTime() {
-		if (timeInMinutes < 60) {
-			return `${timeInMinutes}m`;
-		}
-		if (timeInMinutes < 1440) {
-			return `${Math.floor(timeInMinutes / 60)}h`;
-		}
-
-		return `${Math.floor(timeInMinutes / 1440)}d`;
-	}
-
-	function formatText() {
-		if (title.length <= 8) return title;
-		return `${title.slice(0, 8)}...`;
-	}
-
 	return (
 		<View style={styles.content}>
 			<View style={styles.title}>
@@ -55,7 +40,7 @@ export function Card({ status, title, timeInMinutes }: Props) {
 					}}
 					numberOfLines={1}
 				>
-					{formatText()} {formatTime()}
+					{formatText(title)} {formatTime(timeInMinutes)}
 				</Text>
 				<Text
 					style={{

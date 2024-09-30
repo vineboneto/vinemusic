@@ -1,6 +1,7 @@
 import { Button } from "@/components/form/button";
 import { Select } from "@/components/form/select";
 import { Textarea } from "@/components/form/textarea";
+import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
@@ -33,7 +34,10 @@ export default function Index() {
 				value={observation}
 				onChangeText={(v) => setObservation(v)}
 			/>
-			<Button title="Iniciar" />
+			<Button
+				title="Iniciar"
+				onPress={() => router.push({ pathname: "/home/music/timer" })}
+			/>
 		</View>
 	);
 }
