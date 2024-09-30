@@ -3,4 +3,5 @@ export const Font = {
 	InterMedium: "Inter_28pt-Medium",
 	InterRegular: "Inter_28pt-Regular",
 	InterSemiBold: "Inter_28pt-SemiBold",
+	InterBold: "Inter_28pt-Bold",
 };

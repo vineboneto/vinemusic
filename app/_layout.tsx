@@ -12,6 +12,7 @@ export default function RootLayout() {
 		[Font.InterMedium]: require("../assets/fonts/Inter_28pt-Medium.ttf"),
 		[Font.InterRegular]: require("../assets/fonts/Inter_28pt-Regular.ttf"),
 		[Font.InterSemiBold]: require("../assets/fonts/Inter_28pt-SemiBold.ttf"),
+		[Font.InterBold]: require("../assets/fonts/Inter_28pt-Bold.ttf"),
 	});
 
 	useEffect(() => {
@@ -25,7 +26,7 @@ export default function RootLayout() {
 	}
 
 	return (
-		<Stack>
+		<Stack screenOptions={{ headerShown: false }}>
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 		</Stack>
 	);

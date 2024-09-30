@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
 import { Tabs } from "expo-router/tabs";
 import { Text } from "react-native";
 
@@ -16,16 +16,7 @@ export default function TabLayout() {
 				tabBarItemStyle: {
 					backgroundColor: Colors.dark.background,
 				},
-				headerTitleAlign: "center",
-				headerShadowVisible: false,
-				headerTitle: (props) => (
-					<Text
-						{...props}
-						style={{ fontSize: 24, fontFamily: Font.JungleRegular }}
-					>
-						Vine Music
-					</Text>
-				),
+				headerShown: false,
 				tabBarShowLabel: false,
 				tabBarStyle: {
 					height: 60,
@@ -39,7 +30,7 @@ export default function TabLayout() {
 				name="home"
 				options={{
 					tabBarIcon: ({ color }) => (
-						<MaterialIcons size={28} name="home" color={color} />
+						<Feather size={28} name="home" color={color} />
 					),
 				}}
 			/>
@@ -47,7 +38,7 @@ export default function TabLayout() {
 				name="profile"
 				options={{
 					tabBarIcon: ({ color }) => (
-						<MaterialIcons size={28} name="person" color={color} />
+						<Feather size={28} name="user" color={color} />
 					),
 				}}
 			/>
@@ -55,7 +46,7 @@ export default function TabLayout() {
 				name="info"
 				options={{
 					tabBarIcon: ({ color }) => (
-						<MaterialIcons size={28} name="info" color={color} />
+						<Feather size={28} name="info" color={color} />
 					),
 				}}
 			/>
