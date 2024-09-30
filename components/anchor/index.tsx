@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
 	Animated,
@@ -6,6 +5,7 @@ import {
 	Modal,
 	StyleSheet,
 	TouchableOpacity,
+	StatusBar,
 } from "react-native";
 
 const { height: screenHeight } = Dimensions.get("window");
@@ -22,6 +22,9 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 
 	useEffect(() => {
 		if (visible) {
+			// Altera a cor da StatusBar quando o modal estiver visível
+			StatusBar.setBarStyle("light-content");
+			StatusBar.setBackgroundColor("rgba(0, 0, 0, 0.5)", true);
 			// Animação para mostrar o modal de baixo para cima
 			Animated.timing(slideAnim, {
 				toValue: 0,
@@ -29,6 +32,9 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 				useNativeDriver: true,
 			}).start();
 		} else {
+			// Restaura a cor original da StatusBar
+			StatusBar.setBarStyle("dark-content");
+			StatusBar.setBackgroundColor("transparent", true);
 			// Animação para esconder o modal
 			Animated.timing(slideAnim, {
 				toValue: screenHeight,
@@ -40,12 +46,6 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 
 	return (
 		<Modal transparent visible={visible} animationType="none">
-			<StatusBar
-				translucent
-				backgroundColor={visible ? "rgba(0, 0, 0, 0.5)" : "transparent"}
-				animated={false}
-				hideTransitionAnimation="fade"
-			/>
 			<TouchableOpacity
 				style={styles.overlay}
 				activeOpacity={1}
