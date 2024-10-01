@@ -6,6 +6,9 @@ import { Font } from "@/constants/Font";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { StatusBar } from "expo-status-bar";
 import { SessionProvider } from "@/context/auth";
+import migrations from "@/drizzle/migrations";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { db } from "@/db/client";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +20,12 @@ export default function RootLayout() {
 		[Font.InterSemiBold]: require("../assets/fonts/Inter_28pt-SemiBold.ttf"),
 		[Font.InterBold]: require("../assets/fonts/Inter_28pt-Bold.ttf"),
 	});
+
+	const { success: hasRunMigrations, error: runningMigrationError } =
+		useMigrations(db, migrations);
+	useEffect(() => {
+		if (runningMigrationError) throw runningMigrationError;
+	}, [runningMigrationError]);
 
 	useEffect(() => {
 		if (loaded || error) {

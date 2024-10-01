@@ -7,10 +7,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 type Props = {
 	status: "finish" | "pendent";
 	title: string;
+	observation: string | null;
 	timeInMinutes: number;
 };
 
-export function Card({ status, title, timeInMinutes }: Props) {
+export function Card({ status, title, observation, timeInMinutes }: Props) {
 	function Status() {
 		function getStatus() {
 			if (status === "finish") return "Finalizada";
@@ -59,10 +60,7 @@ export function Card({ status, title, timeInMinutes }: Props) {
 				}}
 				numberOfLines={2}
 			>
-				Estudando partituras e teória musical Lorem ipsum dolor sit amet
-				consectetur adipisicing elit. Ipsum recusandae iste est eius doloribus
-				vel fugit, architecto hic. Voluptates illum impedit totam nam distinctio
-				tempora, fugit porro molestiae esse delectus.
+				{observation}
 			</Text>
 			<View style={styles.foooter}>
 				<Status />

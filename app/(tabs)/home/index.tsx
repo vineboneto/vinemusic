@@ -5,28 +5,21 @@ import { Label } from "@/components/form/label";
 import { ButtonActionsGroup } from "@/components/home/button-action";
 import { Card } from "@/components/home/card";
 import { Font } from "@/constants/Font";
-import { router } from "expo-router";
-import { useState } from "react";
+import { useQuery } from "@/hooks/query";
+import { useMusicStore } from "@/hooks/useMusicStore";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
-function Title() {
+function Title({ hasValue }: { hasValue: boolean }) {
 	return (
 		<Text style={{ fontFamily: Font.InterRegular }}>
-			Atividades de estudo mais recentes ...
+			{hasValue
+				? "Atividades de estudo mais recentes ..."
+				: "Nenhuma atividade encontrada"}
 		</Text>
 	);
 }
-
-type MusicItemData = {
-	status: "finish" | "pendent";
-	title: string;
-	timeInMinutes: number;
-};
-
-const data: MusicItemData[] = [
-	{ status: "finish", title: "Piano", timeInMinutes: 30 },
-	{ status: "pendent", title: "Guitarra", timeInMinutes: 60 * 4 },
-];
 
 export default function Index() {
 	const [visibleSearch, setVisibleSearch] = useState(false);
@@ -40,6 +33,16 @@ export default function Index() {
 		open: false,
 	});
 
+	const { fetch } = useMusicStore();
+	const { data, hasValue, refetch } = useQuery({ fn: fetch });
+
+	useFocusEffect(
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+		useCallback(() => {
+			refetch();
+		}, []),
+	);
+
 	return (
 		<>
 			<View
@@ -52,21 +55,23 @@ export default function Index() {
 				}}
 			>
 				<ButtonActionsGroup
+					refetch={() => refetch()}
 					openFilter={() => setVisibleSearch(true)}
 					openReport={() => setVisibleReport(true)}
 				/>
-				<Title />
+				<Title hasValue={hasValue(data)} />
 				<SafeAreaView>
 					<FlatList
-						data={new Array(20).fill(0).map((_, idx) => data[idx % 2])}
+						data={data}
 						renderItem={({ item }) => (
 							<Card
-								title={item.title}
-								timeInMinutes={item.timeInMinutes}
-								status={item.status}
+								title={item.instrument as string}
+								observation={item.observation}
+								timeInMinutes={0}
+								status={item.status as "finish" | "pendent"}
 							/>
 						)}
-						keyExtractor={(item, idx) => idx.toString()}
+						keyExtractor={(item, idx) => item.id.toString()}
 						ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
 					/>
 				</SafeAreaView>

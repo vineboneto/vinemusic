@@ -6,9 +6,10 @@ import { Pressable, StyleSheet, View } from "react-native";
 type Props = {
 	openFilter: () => void;
 	openReport: () => void;
+	refetch: () => void;
 };
 
-export function ButtonActionsGroup({ openFilter, openReport }: Props) {
+export function ButtonActionsGroup({ openFilter, openReport, refetch }: Props) {
 	return (
 		<View style={styles.content}>
 			<Pressable
@@ -22,6 +23,9 @@ export function ButtonActionsGroup({ openFilter, openReport }: Props) {
 			</Pressable>
 			<Pressable style={styles.button} onPress={() => openReport()}>
 				<Feather name="file-text" color={Colors.light.icon} size={35} />
+			</Pressable>
+			<Pressable style={styles.button} onPress={() => refetch()}>
+				<Feather name="refresh-cw" color={Colors.light.icon} size={35} />
 			</Pressable>
 		</View>
 	);

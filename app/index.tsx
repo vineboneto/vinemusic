@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from "expo-router";
 import { useSession } from "@/context/auth";
+
 import { ActivityIndicator, View } from "react-native";
 
 export default function StartPage() {
