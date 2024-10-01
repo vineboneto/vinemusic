@@ -139,10 +139,11 @@ export default function Index() {
 					</Text>
 					<Button
 						style={{ marginTop: 40 }}
-						title="Excluir"
 						variant="danger"
 						onPress={() => setVisible(false)}
-					/>
+					>
+						Excluir
+					</Button>
 				</View>
 			</Anchor>
 		</>

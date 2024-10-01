@@ -1,16 +1,11 @@
 import { Button } from "@/components/form/button";
 import { type DateValue, InputDate } from "@/components/form/date";
-import { Input } from "@/components/form/input";
 import { Label } from "@/components/form/label";
 import { Select } from "@/components/form/select";
 import { Textarea } from "@/components/form/textarea";
-import { Colors } from "@/constants/Colors";
-import { Font } from "@/constants/Font";
-import { formatDateOnly } from "@/utils";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, View, TouchableWithoutFeedback } from "react-native";
+import { View } from "react-native";
 
 const values = [
 	{ value: "piano", label: "Piano" },
@@ -120,10 +115,11 @@ export default function Index() {
 
 			<Button
 				style={{ marginTop: 10 }}
-				title="Salvar"
 				variant="sucess"
 				onPress={() => router.back()}
-			/>
+			>
+				Salvar
+			</Button>
 		</View>
 	);
 }

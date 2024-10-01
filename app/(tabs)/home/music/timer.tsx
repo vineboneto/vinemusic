@@ -36,10 +36,9 @@ export default function Index() {
 				</Text>
 			</View>
 			<View>
-				<Button
-					title="Finalizar"
-					onPress={() => router.replace({ pathname: "/home/music/end" })}
-				/>
+				<Button onPress={() => router.replace({ pathname: "/home/music/end" })}>
+					Finalizar
+				</Button>
 			</View>
 		</View>
 	);

@@ -59,10 +59,9 @@ export default function Index() {
 					</Text>
 				</View>
 			</View>
-			<Button
-				title="Voltar"
-				onPress={() => router.replace({ pathname: "/home" })}
-			/>
+			<Button onPress={() => router.replace({ pathname: "/home" })}>
+				Voltar
+			</Button>
 		</View>
 	);
 }

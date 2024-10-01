@@ -39,7 +39,8 @@
             "./assets/fonts/Inter_28pt-Bold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

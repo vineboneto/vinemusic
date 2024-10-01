@@ -15,7 +15,6 @@ export default function TabLayout() {
 				tabBarItemStyle: {
 					backgroundColor: Colors.dark.background,
 				},
-
 				tabBarShowLabel: false,
 				tabBarStyle: {
 					height: 60,
@@ -37,7 +36,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="profile"
 				options={{
-					...header,
+					headerShown: false,
 					tabBarIcon: ({ color }) => (
 						<Feather size={28} name="user" color={color} />
 					),
@@ -46,7 +45,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="info"
 				options={{
-					...header,
+					headerShown: false,
 					tabBarIcon: ({ color }) => (
 						<Feather size={28} name="info" color={color} />
 					),

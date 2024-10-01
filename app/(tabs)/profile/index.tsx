@@ -4,6 +4,7 @@ import { Input } from "@/components/form/input";
 import { Label } from "@/components/form/label";
 import { Font } from "@/constants/Font";
 import Feather from "@expo/vector-icons/Feather";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
@@ -31,7 +32,6 @@ export default function Index() {
 					<Input placeholder="Nome" />
 				</View>
 				<Button
-					title="Atualizar Nome"
 					onPress={() => {
 						Toast.show({
 							type: ALERT_TYPE.SUCCESS,
@@ -39,16 +39,15 @@ export default function Index() {
 							textBody: "Nome Atualizado com sucesso",
 						});
 					}}
-				/>
-				<Button
-					title="Atualizar Senha"
-					onPress={() => setVisiblePassword(true)}
-				/>
-				<Button
-					title="Excluir Conta"
-					variant="danger"
-					onPress={() => setVisibleDelete(true)}
-				/>
+				>
+					Atualizar Nome
+				</Button>
+				<Button onPress={() => setVisiblePassword(true)}>
+					Atualizar Senha
+				</Button>
+				<Button variant="danger" onPress={() => setVisibleDelete(true)}>
+					Excluir Conta
+				</Button>
 				<View
 					style={{
 						flex: 1,
@@ -63,6 +62,7 @@ export default function Index() {
 							alignItems: "center",
 							columnGap: 10,
 						}}
+						onPress={() => router.replace("/signin")}
 					>
 						<Feather
 							name="log-out"
@@ -96,7 +96,7 @@ export default function Index() {
 						<Label>Confirmar Senha</Label>
 						<Input placeholder="Confirmar nova senha" />
 					</View>
-					<Button title="Alterar" onPress={() => {}} />
+					<Button onPress={() => {}}>Alterar</Button>
 				</View>
 			</Anchor>
 			<Anchor visible={visibleDelete} onClose={() => setVisibleDelete(false)}>
@@ -107,10 +107,11 @@ export default function Index() {
 					</Text>
 					<Button
 						style={{ marginTop: 40 }}
-						title="Excluir"
 						variant="danger"
 						onPress={() => setVisibleDelete(false)}
-					/>
+					>
+						Excluir
+					</Button>
 				</View>
 			</Anchor>
 		</>

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { Font } from "@/constants/Font";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { StatusBar } from "expo-status-bar";
+import { SessionProvider } from "@/context/auth";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,11 +29,13 @@ export default function RootLayout() {
 	}
 
 	return (
-		<AlertNotificationRoot>
-			<StatusBar translucent />
-			<Stack screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-			</Stack>
-		</AlertNotificationRoot>
+		<SessionProvider>
+			<AlertNotificationRoot>
+				<StatusBar translucent />
+				<Stack screenOptions={{ headerShown: false }}>
+					<Stack.Screen name="(tabs)" />
+				</Stack>
+			</AlertNotificationRoot>
+		</SessionProvider>
 	);
 }

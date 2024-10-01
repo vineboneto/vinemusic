@@ -18,11 +18,15 @@ export const Colors = {
 		button: {
 			text: {
 				default: "#fff",
+				sucess: "#fff",
+				danger: "#fff",
+				ghost: "black",
 			},
 			container: {
 				default: "black",
 				sucess: "#008000",
 				danger: "#FF0000",
+				ghost: "transparent",
 			},
 		},
 	},

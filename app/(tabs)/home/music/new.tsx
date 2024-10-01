@@ -34,10 +34,9 @@ export default function Index() {
 				value={observation}
 				onChangeText={(v) => setObservation(v)}
 			/>
-			<Button
-				title="Iniciar"
-				onPress={() => router.push({ pathname: "/home/music/timer" })}
-			/>
+			<Button onPress={() => router.push({ pathname: "/home/music/timer" })}>
+				Iniciar
+			</Button>
 		</View>
 	);
 }

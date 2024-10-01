@@ -98,7 +98,7 @@ export default function Index() {
 							placeholder="Data Final"
 						/>
 					</View>
-					<Button title="Buscar" onPress={() => setVisibleSearch(false)} />
+					<Button onPress={() => setVisibleSearch(false)}>Buscar</Button>
 				</View>
 			</Anchor>
 			<Anchor
@@ -129,12 +129,13 @@ export default function Index() {
 						/>
 					</View>
 					<Button
-						title="Gerar"
 						onPress={() => {
 							setVisibleReport(false);
 							router.push({ pathname: "/home/music/report" });
 						}}
-					/>
+					>
+						Gerar
+					</Button>
 				</View>
 			</Anchor>
 		</>

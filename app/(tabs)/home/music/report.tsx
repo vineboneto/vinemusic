@@ -1,6 +1,4 @@
-import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
-import { router } from "expo-router";
 import { Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 

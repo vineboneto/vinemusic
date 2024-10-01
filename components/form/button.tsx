@@ -5,12 +5,17 @@ import type { ComponentProps } from "react";
 import { Pressable, type StyleProp, Text, type ViewStyle } from "react-native";
 
 type Props = Omit<ComponentProps<typeof Pressable>, "style"> & {
-	title: string;
-	variant?: "sucess" | "danger" | "default";
+	children: string;
+	variant?: "sucess" | "danger" | "default" | "ghost";
 	style?: StyleProp<ViewStyle>;
 };
 
-export function Button({ title, style, variant = "default", ...rest }: Props) {
+export function Button({
+	children,
+	style,
+	variant = "default",
+	...rest
+}: Props) {
 	return (
 		<Pressable
 			style={[
@@ -30,10 +35,10 @@ export function Button({ title, style, variant = "default", ...rest }: Props) {
 				style={{
 					fontFamily: Font.InterRegular,
 					fontSize: 16,
-					color: Colors.light.button.text.default,
+					color: Colors.light.button.text[variant],
 				}}
 			>
-				{title}
+				{children}
 			</Text>
 		</Pressable>
 	);
