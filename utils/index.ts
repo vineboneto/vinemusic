@@ -14,7 +14,8 @@ export function formatText(text: string) {
 	return `${text.slice(0, 8)}...`;
 }
 
-export function formatTextWithEllipsis(text: string) {
+export function formatTextWithEllipsis(text?: string) {
+	if (!text) return "";
 	if (text.length <= 8) return `${text}...`;
 	return `${text.slice(0, 8)}...`;
 }

@@ -1,12 +1,12 @@
-import { sql } from "drizzle-orm";
+import { isNotNull, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const music = sqliteTable("music", {
 	id: integer("id").primaryKey(),
 	instrument: text("instrument").notNull(),
 	observation: text("observation"),
-	status: text("status"),
-	startDate: integer("start_date", { mode: "timestamp_ms" }),
+	status: text("status").notNull(),
+	startDate: integer("start_date", { mode: "timestamp_ms" }).notNull(),
 	endDate: integer("end_date", { mode: "timestamp" }),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })
 		.default(sql`(CURRENT_TIMESTAMP)`)
@@ -22,4 +22,5 @@ export type MusicSchema = Omit<
 > & {
 	status: "pendent" | "finish";
 	instrument: string;
+	startDate: Date;
 };

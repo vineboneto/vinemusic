@@ -1,14 +1,15 @@
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
 type PropsQuery<T> = {
 	fn: () => Promise<T>;
 };
 
-export function useQuery<T = unknown>({ fn }: PropsQuery<T>) {
+export function useQuery<T = unknown, R = unknown>({ fn }: PropsQuery<T>) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isRefetch, setIsRefetch] = useState(false);
 	const [error, setError] = useState<Error | undefined>();
-	const [data, setData] = useState<T>();
+	const [data, setData] = useState<T | undefined>();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const fetchCallback = useCallback(
@@ -46,10 +47,18 @@ export function useQuery<T = unknown>({ fn }: PropsQuery<T>) {
 		return Array.isArray(data) ? data.length > 0 : data !== undefined;
 	}
 
+	useFocusEffect(
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+		useCallback(() => {
+			refetch();
+		}, []),
+	);
+
 	return {
-		isLoading,
+		isLoading: isLoading,
 		refetch,
 		data,
+		error,
 		hasValue,
 	};
 }
@@ -62,7 +71,6 @@ export function useMutation<TData = unknown, TVariables = unknown>({
 	fn,
 }: PropsMutation<TData, TVariables>) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [data, setData] = useState<TData | undefined>(undefined);
 	const [error, setError] = useState<Error | undefined>();
 
 	const mutate = useCallback(
@@ -71,7 +79,7 @@ export function useMutation<TData = unknown, TVariables = unknown>({
 			setError(undefined);
 			try {
 				const result = await fn(variables);
-				setData(result);
+				return result;
 			} catch (err) {
 				setError(err as Error);
 				console.error("Erro durante a mutação:", err);
@@ -84,7 +92,6 @@ export function useMutation<TData = unknown, TVariables = unknown>({
 
 	return {
 		isLoading,
-		data,
 		error,
 		mutate,
 		hasError: error !== undefined,

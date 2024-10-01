@@ -15,11 +15,11 @@ export default function Index() {
 	const [observation, setObservation] = useState<string>("");
 	const { create, fetchDistinctInstruments } = useMusicStore();
 	const { mutate } = useMutation({ fn: create });
-	const { data, isLoading, hasValue } = useQuery({
+	const { data, hasValue } = useQuery({
 		fn: fetchDistinctInstruments,
 	});
 
-	function submit() {
+	async function submit() {
 		if (!instrument?.trim()) {
 			Toast.show({
 				type: ALERT_TYPE.DANGER,
@@ -40,13 +40,30 @@ export default function Index() {
 			return;
 		}
 
-		if (isNewable) {
-			mutate({ instrument: instrumentText, observation, status: "pendent" });
-		} else {
-			mutate({ instrument, observation, status: "pendent" });
+		async function run() {
+			if (isNewable) {
+				return mutate({
+					instrument: instrumentText,
+					observation,
+					status: "pendent",
+					startDate: new Date(),
+				});
+			}
+			if (instrument) {
+				return mutate({
+					instrument,
+					observation,
+					status: "pendent",
+					startDate: new Date(),
+				});
+			}
 		}
 
-		router.push({ pathname: "/home/music/timer" });
+		const result = await run();
+
+		if (result) {
+			router.push({ pathname: "/home/music/timer", params: { id: result.id } });
+		}
 	}
 
 	return (

@@ -1,10 +1,23 @@
 import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
+import { useQuery } from "@/hooks/query";
+import { useMusicStore } from "@/hooks/useMusicStore";
 import { formatDate } from "@/utils";
-import { router } from "expo-router";
+import { date } from "@/utils/date";
+import { router, useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 
 export default function Index() {
+	const { id } = useLocalSearchParams<{ id: string }>();
+	const { fetchById } = useMusicStore();
+	const { data, isLoading } = useQuery({
+		fn: async () => {
+			if (id) {
+				return fetchById(Number(id));
+			}
+		},
+	});
+
 	return (
 		<View
 			style={{
@@ -21,10 +34,10 @@ export default function Index() {
 
 			<View style={{ rowGap: 10 }}>
 				<Text style={{ fontSize: 24, fontFamily: Font.InterRegular }}>
-					Início: {formatDate(new Date())}
+					Início: {data?.endDate ? formatDate(data.startDate) : "Carregando..."}
 				</Text>
 				<Text style={{ fontSize: 24, fontFamily: Font.InterRegular }}>
-					Fim: {formatDate(new Date())}
+					Fim: {data?.endDate ? formatDate(data.endDate) : "Carregando..."}
 				</Text>
 			</View>
 			<View
@@ -55,7 +68,9 @@ export default function Index() {
 							textAlign: "center",
 						}}
 					>
-						14m
+						{data?.endDate
+							? `${date.diffInMinutes(data.startDate, data.endDate)}m`
+							: "0m"}
 					</Text>
 				</View>
 			</View>

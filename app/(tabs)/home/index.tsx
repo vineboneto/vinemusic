@@ -7,8 +7,8 @@ import { Card } from "@/components/home/card";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router } from "expo-router";
+import { useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 function Title({ hasValue }: { hasValue: boolean }) {
@@ -35,13 +35,6 @@ export default function Index() {
 
 	const { fetch } = useMusicStore();
 	const { data, hasValue, refetch } = useQuery({ fn: fetch });
-
-	useFocusEffect(
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-		useCallback(() => {
-			refetch();
-		}, []),
-	);
 
 	return (
 		<>
