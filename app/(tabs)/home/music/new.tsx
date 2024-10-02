@@ -14,8 +14,20 @@ export default function Index() {
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");
 	const { create, fetchDistinctInstruments } = useMusicStore();
-	const { mutate } = useMutation({ fn: create });
-	const { data, hasValue } = useQuery({
+	const { mutate } = useMutation({
+		fn: create,
+		onSuccess: (result) => {
+			router.push({ pathname: "/home/music/timer", params: { id: result.id } });
+		},
+		onError: (err) => {
+			Toast.show({
+				type: ALERT_TYPE.DANGER,
+				title: "Erro",
+				textBody: err.message,
+			});
+		},
+	});
+	const { data, isOk } = useQuery({
 		fn: fetchDistinctInstruments,
 	});
 
@@ -40,30 +52,21 @@ export default function Index() {
 			return;
 		}
 
-		async function run() {
-			if (isNewable) {
-				return mutate({
-					instrument: instrumentText,
-					observation,
-					status: "pendent",
-					startDate: new Date(),
-				});
-			}
-			if (instrument) {
-				return mutate({
-					instrument,
-					observation,
-					status: "pendent",
-					startDate: new Date(),
-				});
-			}
+		if (isNewable) {
+			return mutate({
+				instrument: instrumentText,
+				observation,
+				status: "pendent",
+				startDate: new Date(),
+			});
 		}
 
-		const result = await run();
-
-		if (result) {
-			router.push({ pathname: "/home/music/timer", params: { id: result.id } });
-		}
+		return mutate({
+			instrument,
+			observation,
+			status: "pendent",
+			startDate: new Date(),
+		});
 	}
 
 	return (
@@ -89,7 +92,7 @@ export default function Index() {
 					value={instrument}
 					onChange={(v) => setInstrument(v)}
 					options={
-						hasValue(data)
+						isOk
 							? data.map(({ instrument }) => ({
 									value: instrument,
 									label: instrument,

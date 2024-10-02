@@ -2,7 +2,7 @@ import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
-import { formatDate } from "@/utils";
+import { formatDate, formatTime } from "@/utils";
 import { date } from "@/utils/date";
 import { router, useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
@@ -10,13 +10,16 @@ import { Text, View } from "react-native";
 export default function Index() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { fetchById } = useMusicStore();
-	const { data, isLoading } = useQuery({
+	const { data, isOk } = useQuery({
 		fn: async () => {
 			if (id) {
 				return fetchById(Number(id));
 			}
 		},
 	});
+
+	const timeInMinutes =
+		isOk && data.endDate ? date.diffInMinutes(data.startDate, data.endDate) : 0;
 
 	return (
 		<View
@@ -68,13 +71,11 @@ export default function Index() {
 							textAlign: "center",
 						}}
 					>
-						{data?.endDate
-							? `${date.diffInMinutes(data.startDate, data.endDate)}m`
-							: "0m"}
+						{formatTime(timeInMinutes)}
 					</Text>
 				</View>
 			</View>
-			<Button onPress={() => router.replace({ pathname: "/home" })}>
+			<Button onPress={() => router.replace({ pathname: "/home", params: {} })}>
 				Voltar
 			</Button>
 		</View>

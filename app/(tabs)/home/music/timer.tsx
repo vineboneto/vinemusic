@@ -12,8 +12,56 @@ export default function Index() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 
 	const { finish, deleteById, fetchById } = useMusicStore();
-	const { mutate } = useMutation({ fn: finish });
-	const { mutate: mutateDelete } = useMutation({ fn: deleteById });
+	const { mutate } = useMutation<"invalid" | "home" | "next" | "wait", Date>({
+		fn: async (endDate: Date) => {
+			if (!id || !data) return "invalid";
+
+			if (date.diffInMinutes(data.startDate, endDate) === 0) {
+				const result = await new Promise<"home" | "wait">((resolve, reject) => {
+					Dialog.show({
+						title: "Deseja continuar?",
+						textBody:
+							"Você praticou menos de um minuto, essa atividade não será contabilizada. ",
+						type: ALERT_TYPE.WARNING,
+						button: "Continuar",
+						onPressButton: async () => {
+							deleteById(Number(id))
+								.then(() => resolve("home"))
+								.catch(reject);
+						},
+						onHide: () => resolve("wait"),
+					});
+				});
+
+				return result;
+			}
+
+			await finish({ endDate, id: Number(id) });
+
+			return "next";
+		},
+		onSuccess: (result) => {
+			if (result === "home") {
+				router.replace("/home");
+				Dialog.hide();
+				Toast.show({
+					type: ALERT_TYPE.INFO,
+					textBody: "Atividade removida",
+				});
+			}
+			if (result === "next") {
+				router.replace({ pathname: "/home/music/end", params: { id } });
+			}
+		},
+		onError: (err) => {
+			Toast.show({
+				type: ALERT_TYPE.DANGER,
+				title: "Erro",
+				textBody: err.message,
+			});
+		},
+	});
+
 	const { data } = useQuery({
 		fn: async () => {
 			if (id) {
@@ -21,35 +69,6 @@ export default function Index() {
 			}
 		},
 	});
-
-	const submit = async (endDate: Date) => {
-		if (!id || !data) return;
-
-		if (date.diffInMinutes(data.startDate, endDate) === 0) {
-			Dialog.show({
-				title: "Deseja continuar?",
-				textBody:
-					"Você praticou menos de um minuto, essa atividade não será contabilizada. ",
-				type: ALERT_TYPE.WARNING,
-				button: "Continuar",
-				onPressButton: async () => {
-					await mutateDelete(Number(id));
-					router.replace("/home");
-					Dialog.hide();
-					Toast.show({
-						type: ALERT_TYPE.INFO,
-						textBody: "Atividade removida",
-					});
-				},
-			});
-			return;
-		}
-
-		try {
-			await mutate({ endDate, id: Number(id) });
-			router.replace({ pathname: "/home/music/end", params: { id } });
-		} catch {}
-	};
 
 	return (
 		<View
@@ -82,7 +101,7 @@ export default function Index() {
 				</Text>
 			</View>
 			<View>
-				<Button onPress={() => submit(new Date())}>Finalizar</Button>
+				<Button onPress={() => mutate(new Date())}>Finalizar</Button>
 			</View>
 		</View>
 	);

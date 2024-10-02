@@ -34,7 +34,7 @@ export default function Index() {
 	});
 
 	const { fetch } = useMusicStore();
-	const { data, hasValue, refetch } = useQuery({ fn: fetch });
+	const { data, isUndefined, refetch } = useQuery({ fn: fetch });
 
 	return (
 		<>
@@ -52,18 +52,11 @@ export default function Index() {
 					openFilter={() => setVisibleSearch(true)}
 					openReport={() => setVisibleReport(true)}
 				/>
-				<Title hasValue={hasValue(data)} />
+				<Title hasValue={isUndefined === false} />
 				<SafeAreaView>
 					<FlatList
 						data={data}
-						renderItem={({ item }) => (
-							<Card
-								title={item.instrument as string}
-								observation={item.observation}
-								timeInMinutes={0}
-								status={item.status as "finish" | "pendent"}
-							/>
-						)}
+						renderItem={({ item }) => <Card item={item} />}
 						keyExtractor={(item, idx) => item.id.toString()}
 						ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
 					/>

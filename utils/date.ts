@@ -8,4 +8,15 @@ export const date = {
 
 		return Math.floor(differenceInMs / 1000 / 60);
 	},
+
+	combineDateTime: (date: Date, time: Date) => {
+		const combinedDate = new Date(date); // Cria uma nova instância de Date com a data
+		combinedDate.setHours(
+			time.getHours(),
+			time.getMinutes(),
+			time.getSeconds(),
+			time.getMilliseconds(),
+		); // Define horas, minutos, segundos e milissegundos
+		return combinedDate;
+	},
 };

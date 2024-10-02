@@ -21,26 +21,52 @@ export function useMusicStore() {
 			.update(music)
 			.set({
 				endDate,
+				status: "finish",
 			})
 			.where(eq(music.id, id));
 	}
 
-	async function fetchById(id: number) {
+	async function update({
+		endDate,
+		id,
+		instrument,
+		observation,
+		startDate,
+	}: Required<
+		Pick<
+			MusicSchema,
+			"endDate" | "id" | "startDate" | "observation" | "instrument"
+		>
+	>) {
+		await db
+			.update(music)
+			.set({
+				startDate,
+				endDate,
+				instrument,
+				observation,
+			})
+			.where(eq(music.id, id));
+	}
+
+	async function fetchById(id: number): Promise<MusicSchema | undefined> {
 		try {
-			return db.select().from(music).where(eq(music.id, id)).get();
+			return db.select().from(music).where(eq(music.id, id)).get() as
+				| MusicSchema
+				| undefined;
 		} catch (err) {
 			return;
 		}
 	}
 
-	async function fetch() {
+	async function fetch(): Promise<MusicSchema[]> {
 		try {
 			return db
 				.select()
 				.from(music)
 				.orderBy(desc(music.createdAt))
 				.limit(20)
-				.all();
+				.all() as MusicSchema[];
 		} catch (err) {
 			return [];
 		}
@@ -83,5 +109,6 @@ export function useMusicStore() {
 		finish,
 		deleteById,
 		fetchDistinctInstruments,
+		update,
 	};
 }

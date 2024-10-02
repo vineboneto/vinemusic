@@ -1,17 +1,18 @@
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
+import type { MusicSchema } from "@/db/schema";
 import { formatText, formatTime } from "@/utils";
+import { date } from "@/utils/date";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
-	status: "finish" | "pendent";
-	title: string;
-	observation: string | null;
-	timeInMinutes: number;
+	item: MusicSchema;
 };
 
-export function Card({ status, title, observation, timeInMinutes }: Props) {
+export function Card({
+	item: { instrument, observation, id, startDate, endDate, status },
+}: Props) {
 	function Status() {
 		function getStatus() {
 			if (status === "finish") return "Finalizada";
@@ -31,6 +32,9 @@ export function Card({ status, title, observation, timeInMinutes }: Props) {
 		);
 	}
 
+	const timeInMinutes =
+		endDate && startDate ? date.diffInMinutes(startDate, endDate) : 0;
+
 	return (
 		<View style={styles.content}>
 			<View style={styles.title}>
@@ -41,7 +45,8 @@ export function Card({ status, title, observation, timeInMinutes }: Props) {
 					}}
 					numberOfLines={1}
 				>
-					{formatText(title)} {formatTime(timeInMinutes)}
+					{formatText(instrument)}{" "}
+					{status === "pendent" ? "∞" : formatTime(timeInMinutes)}
 				</Text>
 				<Text
 					style={{
@@ -50,7 +55,7 @@ export function Card({ status, title, observation, timeInMinutes }: Props) {
 						alignSelf: "flex-start",
 					}}
 				>
-					Domingo (22/04/2024)
+					{startDate.toLocaleString("pt-BR", { dateStyle: "long" })}
 				</Text>
 			</View>
 			<Text
@@ -68,11 +73,19 @@ export function Card({ status, title, observation, timeInMinutes }: Props) {
 					style={{
 						alignSelf: "flex-end",
 					}}
-					onPress={() =>
+					onPress={() => {
+						if (status === "finish") {
+							return router.push({
+								pathname: "/home/music/view",
+								params: { id },
+							});
+						}
+
 						router.push({
-							pathname: "/home/music/view",
-						})
-					}
+							pathname: "/home/music/timer",
+							params: { id },
+						});
+					}}
 				>
 					<Text
 						style={{

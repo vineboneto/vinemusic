@@ -16,10 +16,9 @@ export const music = sqliteTable("music", {
 		.notNull(),
 });
 
-export type MusicSchema = Omit<
-	typeof music.$inferSelect,
-	"status" | "instrument"
-> & {
+type Music = Omit<typeof music.$inferSelect, "status" | "instrument">;
+
+export type MusicSchema = Music & {
 	status: "pendent" | "finish";
 	instrument: string;
 	startDate: Date;

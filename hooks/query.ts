@@ -5,7 +5,45 @@ type PropsQuery<T> = {
 	fn: () => Promise<T>;
 };
 
-export function useQuery<T = unknown, R = unknown>({ fn }: PropsQuery<T>) {
+type QueryReturn<T> =
+	| {
+			isUndefined: true;
+			isLoading: false;
+			isOk: false;
+			refetch: () => void;
+			data: undefined;
+			error: Error;
+			isError: true;
+	  }
+	| {
+			isUndefined: true;
+			isLoading: true;
+			isOk: false;
+			refetch: () => void;
+			data: undefined;
+			error: undefined;
+			isError: false;
+	  }
+	| {
+			isUndefined: true;
+			isLoading: false;
+			isOk: false;
+			refetch: () => void;
+			data: (T & (object | null)) | undefined;
+			error: undefined;
+			isError: false;
+	  }
+	| {
+			isUndefined: false;
+			isLoading: false;
+			isOk: true;
+			refetch: () => void;
+			data: T & (object | null);
+			error: undefined;
+			isError: false;
+	  };
+
+export function useQuery<T = unknown>({ fn }: PropsQuery<T>): QueryReturn<T> {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isRefetch, setIsRefetch] = useState(false);
 	const [error, setError] = useState<Error | undefined>();
@@ -20,6 +58,7 @@ export function useQuery<T = unknown, R = unknown>({ fn }: PropsQuery<T>) {
 				setData(value);
 			} catch (error) {
 				if (error instanceof Error) {
+					setData(undefined);
 					setError(error);
 				}
 			} finally {
@@ -43,10 +82,6 @@ export function useQuery<T = unknown, R = unknown>({ fn }: PropsQuery<T>) {
 		setIsRefetch((prev) => !prev);
 	}
 
-	function hasValue(data: T | undefined): data is T {
-		return Array.isArray(data) ? data.length > 0 : data !== undefined;
-	}
-
 	useFocusEffect(
 		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useCallback(() => {
@@ -54,35 +89,46 @@ export function useQuery<T = unknown, R = unknown>({ fn }: PropsQuery<T>) {
 		}, []),
 	);
 
+	const isUndefined = data === undefined;
+	const isError = error !== undefined;
+
 	return {
-		isLoading: isLoading,
+		isUndefined,
+		isLoading,
 		refetch,
 		data,
 		error,
-		hasValue,
-	};
+		isOk: !isError && !isUndefined,
+		isError,
+	} as QueryReturn<T>;
 }
 
 type PropsMutation<TData, TVariables> = {
 	fn: (variables: TVariables) => Promise<TData>;
+	onSuccess?: (v: TData) => void;
+	onError?: (err: Error) => void;
 };
 
 export function useMutation<TData = unknown, TVariables = unknown>({
 	fn,
+	onError,
+	onSuccess,
 }: PropsMutation<TData, TVariables>) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<Error | undefined>();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const mutate = useCallback(
 		async (variables: TVariables) => {
 			setIsLoading(true);
 			setError(undefined);
 			try {
 				const result = await fn(variables);
+				if (onSuccess) onSuccess(result);
 				return result;
 			} catch (err) {
+				if (err instanceof Error && onError) onError(err);
 				setError(err as Error);
-				console.error("Erro durante a mutação:", err);
 			} finally {
 				setIsLoading(false);
 			}
@@ -94,6 +140,6 @@ export function useMutation<TData = unknown, TVariables = unknown>({
 		isLoading,
 		error,
 		mutate,
-		hasError: error !== undefined,
+		isError: error !== undefined,
 	};
 }

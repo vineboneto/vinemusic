@@ -2,11 +2,15 @@ import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
-import { formatDate } from "@/utils";
+import { useMutation, useQuery } from "@/hooks/query";
+import { useMusicStore } from "@/hooks/useMusicStore";
+import { formatDate, formatTime } from "@/utils";
+import { date } from "@/utils/date";
 import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 function GroupText({
 	title,
@@ -29,6 +33,51 @@ function GroupText({
 
 export default function Index() {
 	const [visible, setVisible] = useState(false);
+	const { id } = useLocalSearchParams<{ id: string }>();
+	const { fetchById, deleteById } = useMusicStore();
+	const { data, isUndefined, isLoading, isError, error } = useQuery({
+		fn: async () => {
+			if (id) {
+				return fetchById(Number(id));
+			}
+		},
+	});
+
+	const { mutate } = useMutation<unknown, number>({
+		fn: deleteById,
+		onSuccess: () => {
+			Toast.show({
+				type: ALERT_TYPE.SUCCESS,
+				title: "Excluído com sucesso",
+			});
+			setVisible(false);
+			router.replace("/home");
+		},
+		onError: (err) => {
+			setVisible(false);
+			Toast.show({
+				type: ALERT_TYPE.DANGER,
+				title: "Erro",
+				textBody: err.message,
+			});
+		},
+	});
+
+	if (isLoading) {
+		return <Text>Carregando...</Text>;
+	}
+
+	if (isError) {
+		return <Text>{error.message}</Text>;
+	}
+
+	if (isUndefined) {
+		return <Text>Data não encontrado</Text>;
+	}
+
+	const timeInMinutes = data.endDate
+		? date.diffInMinutes(data.startDate, data.endDate)
+		: 0;
 
 	return (
 		<>
@@ -71,7 +120,12 @@ export default function Index() {
 									/>
 								</Pressable>
 								<Pressable
-									onPress={() => router.push({ pathname: "/home/music/edit" })}
+									onPress={() =>
+										router.push({
+											pathname: "/home/music/edit",
+											params: { id: data.id },
+										})
+									}
 								>
 									<Feather
 										name="edit"
@@ -82,9 +136,11 @@ export default function Index() {
 							</View>
 						</View>
 					</View>
-					<GroupText title="Instrumento" description="Piano" />
-					<GroupText title="Inicio" description={formatDate(new Date())} />
-					<GroupText title="Fim" description={formatDate(new Date())} />
+					<GroupText title="Instrumento" description={data.instrument} />
+					<GroupText title="Inicio" description={formatDate(data.startDate)} />
+					{data.endDate && (
+						<GroupText title="Fim" description={formatDate(data.endDate)} />
+					)}
 					<View
 						style={{
 							display: "flex",
@@ -109,24 +165,12 @@ export default function Index() {
 									textAlign: "center",
 								}}
 							>
-								14m
+								{formatTime(timeInMinutes)}
 							</Text>
 						</View>
 					</View>
 					<View>
-						<Text>
-							Estudado partituras e teória musical Lorem ipsum dolor sit amet
-							consectetur adipisicing elit. Illum cupiditate itaque velit
-							tenetur necessitatibus, ad dicta voluptates facilis iusto aperiam,
-							temporibus accusamus optio dolor laborum fuga perspiciatis
-							assumenda esse dolores. Lorem ipsum dolor sit amet consectetur
-							adipisicing elit. Adipisci a est temporibus iste. Dolor error,
-							culpa magnam pariatur voluptatem iure facere fugit incidunt labore
-							mollitia qui, odit debitis eius eos? Lorem ipsum, dolor sit amet
-							consectetur adipisicing elit. Esse recusandae veritatis eius quis
-							nobis numquam voluptate perferendis harum quaerat nisi laborum ea
-							sed dolor odio exercitationem, est a cum earum.
-						</Text>
+						<Text>{data.observation}</Text>
 					</View>
 				</View>
 			</ScrollView>
@@ -140,7 +184,7 @@ export default function Index() {
 					<Button
 						style={{ marginTop: 40 }}
 						variant="danger"
-						onPress={() => setVisible(false)}
+						onPress={() => mutate(data.id)}
 					>
 						Excluir
 					</Button>
