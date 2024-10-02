@@ -7,6 +7,7 @@ export const music = sqliteTable("music", {
 	status: text("status").notNull(),
 	startDate: integer("start_date", { mode: "timestamp_ms" }).notNull(),
 	endDate: integer("end_date", { mode: "timestamp" }),
+	totalInMinutes: integer("minutes").default(0),
 	idInstrument: integer("id_instrument")
 		.notNull()
 		.references(() => instrument.id),

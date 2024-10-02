@@ -1,4 +1,10 @@
+import { Loading } from "@/components/loading";
 import { Font } from "@/constants/Font";
+import { useQuery } from "@/hooks/query";
+import { useMusicStore } from "@/hooks/useMusicStore";
+import { formatTime } from "@/utils";
+import { date } from "@/utils/date";
+import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
@@ -8,14 +14,35 @@ function format(d: Date) {
 	});
 }
 
-const data = [
-	{ value: 50, label: "jan" },
-	{ value: 80, label: "fev" },
-	{ value: 90, label: "mar" },
-	{ value: 70, label: "abr" },
-];
-
 export default function Index() {
+	const params = useLocalSearchParams<{
+		startDate: string;
+		endDate: string;
+	}>();
+
+	const startDate = new Date(params.startDate);
+	const endDate = new Date(params.endDate);
+
+	const { report } = useMusicStore();
+
+	const { data, isLoading, isUndefined, isError, error } = useQuery({
+		fn: () => report({ startDate, endDate }),
+	});
+
+	if (isLoading) {
+		return <Loading />;
+	}
+
+	if (isError) {
+		return <Text>{error.message}</Text>;
+	}
+
+	if (isUndefined) {
+		return <Text>Data não encontrado</Text>;
+	}
+
+	const totalMinutes = data.reduce((acc, item) => acc + item.totalMinutes, 0);
+
 	return (
 		<View
 			style={{
@@ -30,11 +57,18 @@ export default function Index() {
 			</Text>
 
 			<Text style={{ fontFamily: Font.InterRegular, fontSize: 18 }}>
-				{format(new Date())} até {format(new Date())}
+				{format(date.start(startDate, { firstDayMonth: true }))} até{" "}
+				{format(date.end(endDate, { lastDayMonth: true }))}
 			</Text>
 			<BarChart
 				height={250}
-				data={data}
+				data={data.map((v) => ({
+					value: v.totalMinutes,
+					label: v.date.toLocaleString("pt-BR", {
+						month: "2-digit",
+						year: "2-digit",
+					}),
+				}))}
 				spacing={35}
 				autoShiftLabels={false}
 				showLine={false}
@@ -66,7 +100,7 @@ export default function Index() {
 							textAlign: "center",
 						}}
 					>
-						9h
+						{formatTime(totalMinutes)}
 					</Text>
 				</View>
 			</View>

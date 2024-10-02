@@ -1,0 +1,1 @@
+ALTER TABLE `music` ADD `minutes` integer DEFAULT 0;

@@ -19,4 +19,21 @@ export const date = {
 		); // Define horas, minutos, segundos e milissegundos
 		return combinedDate;
 	},
+	start: (date: Date, { firstDayMonth = false } = {}) => {
+		const startOfDay = new Date(date);
+		if (firstDayMonth) {
+			startOfDay.setDate(1);
+		}
+		startOfDay.setHours(0, 0, 0, 0);
+		return startOfDay;
+	},
+	end: (date: Date, { lastDayMonth = false } = {}) => {
+		const endOfDay = new Date(date);
+		if (lastDayMonth) {
+			endOfDay.setMonth(endOfDay.getMonth() + 1);
+			endOfDay.setDate(0);
+		}
+		endOfDay.setHours(23, 59, 59, 999);
+		return endOfDay;
+	},
 };

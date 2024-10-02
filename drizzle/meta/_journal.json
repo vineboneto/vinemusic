@@ -8,6 +8,13 @@
       "when": 1727851217489,
       "tag": "0000_ordinary_mandroid",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1727860873008,
+      "tag": "0001_mean_argent",
+      "breakpoints": true
     }
   ]
 }

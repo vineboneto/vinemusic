@@ -36,7 +36,9 @@ export default function Index() {
 				return result;
 			}
 
-			await finish({ endDate, id: Number(id) });
+			const totalInMinutes = date.diffInMinutes(data.startDate, endDate);
+
+			await finish({ endDate, id: Number(id), totalInMinutes });
 
 			return "next";
 		},

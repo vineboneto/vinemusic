@@ -10,6 +10,7 @@ import { useMusicStore } from "@/hooks/useMusicStore";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 function Title({ hasValue }: { hasValue: boolean }) {
 	return (
@@ -25,16 +26,62 @@ export default function Index() {
 	const [visibleSearch, setVisibleSearch] = useState(false);
 	const [visibleReport, setVisibleReport] = useState(false);
 	const [dateInitial, setDateInitial] = useState<DateValue>({
-		date: new Date(),
+		date: undefined,
 		open: false,
 	});
 	const [dateFinal, setDateFinal] = useState<DateValue>({
-		date: new Date(),
+		date: undefined,
+		open: false,
+	});
+	const [dateInitialReport, setDateInitialReport] = useState<DateValue>({
+		date: undefined,
+		open: false,
+	});
+	const [dateFinalReport, setDateFinalReport] = useState<DateValue>({
+		date: undefined,
 		open: false,
 	});
 
 	const { fetch } = useMusicStore();
-	const { data, isUndefined, refetch } = useQuery({ fn: fetch });
+	const { data, isUndefined, refetch } = useQuery({
+		fn: () => fetch({ startDate: dateInitial.date, endDate: dateFinal.date }),
+	});
+
+	const search = () => {
+		if (
+			dateInitial.date &&
+			dateFinal.date &&
+			dateInitial.date.getTime() > dateFinal.date.getTime()
+		)
+			return Toast.show({
+				title: "Data inicial não pode ser maior que data final",
+				type: ALERT_TYPE.DANGER,
+			});
+		refetch();
+		setVisibleSearch(false);
+	};
+
+	const report = () => {
+		if (!dateInitialReport.date || !dateFinalReport.date) {
+			return Toast.show({
+				title: "Preencha data inicial e final",
+				type: ALERT_TYPE.DANGER,
+			});
+		}
+		if (dateInitialReport.date.getTime() > dateFinalReport.date.getTime())
+			return Toast.show({
+				title: "Data inicial não pode ser maior que data final",
+				type: ALERT_TYPE.DANGER,
+			});
+		setVisibleReport(false);
+		router.push({
+			pathname: "/home/music/report",
+			params: {
+				startDate: dateInitialReport.date.toISOString(),
+				endDate: dateFinalReport.date.toISOString(),
+			},
+		});
+	};
 
 	return (
 		<>
@@ -65,7 +112,7 @@ export default function Index() {
 			<Anchor
 				visible={visibleSearch}
 				onClose={() => setVisibleSearch(false)}
-				height={400}
+				height={450}
 			>
 				<View style={{ rowGap: 20 }}>
 					<Text style={{ fontFamily: Font.InterMedium, fontSize: 20 }}>
@@ -89,7 +136,15 @@ export default function Index() {
 							placeholder="Data Final"
 						/>
 					</View>
-					<Button onPress={() => setVisibleSearch(false)}>Buscar</Button>
+					<Button onPress={() => search()}>Buscar</Button>
+					<Button
+						onPress={() => {
+							setDateInitial({ date: undefined, open: false });
+							setDateFinal({ date: undefined, open: false });
+						}}
+					>
+						Limpar
+					</Button>
 				</View>
 			</Anchor>
 			<Anchor
@@ -104,8 +159,8 @@ export default function Index() {
 					<View>
 						<Label>Data Inicial</Label>
 						<InputDate
-							value={dateInitial}
-							setValue={setDateInitial}
+							value={dateInitialReport}
+							setValue={setDateInitialReport}
 							mode="date"
 							placeholder="Data Inicial"
 						/>
@@ -113,20 +168,13 @@ export default function Index() {
 					<View>
 						<Label>Data Final</Label>
 						<InputDate
-							value={dateFinal}
-							setValue={setDateFinal}
+							value={dateFinalReport}
+							setValue={setDateFinalReport}
 							mode="date"
 							placeholder="Data Final"
 						/>
 					</View>
-					<Button
-						onPress={() => {
-							setVisibleReport(false);
-							router.push({ pathname: "/home/music/report" });
-						}}
-					>
-						Gerar
-					</Button>
+					<Button onPress={() => report()}>Gerar</Button>
 				</View>
 			</Anchor>
 		</>

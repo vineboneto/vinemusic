@@ -50,7 +50,8 @@ export default function Index() {
 		}
 	>({
 		fn: async (data) => {
-			await update(data);
+			const totalInMinutes = date.diffInMinutes(data.startDate, data.endDate);
+			await update({ ...data, totalInMinutes });
 		},
 		onSuccess: () => {
 			Toast.show({

@@ -1,5 +1,6 @@
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
+import { Loading } from "@/components/loading";
 import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
@@ -68,7 +69,7 @@ export default function Index() {
 	});
 
 	if (isLoading) {
-		return <Text>Carregando...</Text>;
+		return <Loading />;
 	}
 
 	if (isError) {
