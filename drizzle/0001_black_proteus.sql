@@ -1,1 +1,0 @@
-ALTER TABLE `music` ADD `status` text;

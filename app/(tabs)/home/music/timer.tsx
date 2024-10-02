@@ -84,10 +84,14 @@ export default function Index() {
 					Praticando
 				</Text>
 				<Text
-					style={{ fontFamily: Font.InterSemiBold, fontSize: 40 }}
+					style={{
+						fontFamily: Font.InterSemiBold,
+						fontSize: 40,
+						textTransform: "capitalize",
+					}}
 					numberOfLines={2}
 				>
-					{formatTextWithEllipsis(data?.instrument)}
+					{formatTextWithEllipsis(data?.instrument.name)}
 				</Text>
 			</View>
 

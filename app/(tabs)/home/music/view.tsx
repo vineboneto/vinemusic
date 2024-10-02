@@ -22,7 +22,11 @@ function GroupText({
 				{title}:
 			</Text>
 			<Text
-				style={{ fontFamily: Font.InterSemiBold, fontSize: 30 }}
+				style={{
+					fontFamily: Font.InterSemiBold,
+					fontSize: 30,
+					textTransform: "capitalize",
+				}}
 				numberOfLines={1}
 			>
 				{description}
@@ -136,7 +140,7 @@ export default function Index() {
 							</View>
 						</View>
 					</View>
-					<GroupText title="Instrumento" description={data.instrument} />
+					<GroupText title="Instrumento" description={data.instrument.name} />
 					<GroupText title="Inicio" description={formatDate(data.startDate)} />
 					{data.endDate && (
 						<GroupText title="Fim" description={formatDate(data.endDate)} />

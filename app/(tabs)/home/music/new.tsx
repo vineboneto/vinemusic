@@ -3,6 +3,7 @@ import { Input } from "@/components/form/input";
 import { Select } from "@/components/form/select";
 import { Textarea } from "@/components/form/textarea";
 import { useMutation, useQuery } from "@/hooks/query";
+import { useInstrumentStore } from "@/hooks/useInstrumentStore";
 import { useMusicStore } from "@/hooks/useMusicStore";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -13,7 +14,8 @@ export default function Index() {
 	const [instrument, setInstrument] = useState<string | null>(null);
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");
-	const { create, fetchDistinctInstruments } = useMusicStore();
+	const { create } = useMusicStore();
+	const { options, create: createInstrument } = useInstrumentStore();
 	const { mutate } = useMutation({
 		fn: create,
 		onSuccess: (result) => {
@@ -28,7 +30,7 @@ export default function Index() {
 		},
 	});
 	const { data, isOk } = useQuery({
-		fn: fetchDistinctInstruments,
+		fn: options,
 	});
 
 	async function submit() {
@@ -53,8 +55,9 @@ export default function Index() {
 		}
 
 		if (isNewable) {
+			const instrument = await createInstrument({ name: instrumentText });
 			return mutate({
-				instrument: instrumentText,
+				idInstrument: instrument.id,
 				observation,
 				status: "pendent",
 				startDate: new Date(),
@@ -62,7 +65,7 @@ export default function Index() {
 		}
 
 		return mutate({
-			instrument,
+			idInstrument: Number(instrument),
 			observation,
 			status: "pendent",
 			startDate: new Date(),
@@ -91,14 +94,7 @@ export default function Index() {
 					placeholder="Selecione um Instrumento"
 					value={instrument}
 					onChange={(v) => setInstrument(v)}
-					options={
-						isOk
-							? data.map(({ instrument }) => ({
-									value: instrument,
-									label: instrument,
-								}))
-							: []
-					}
+					options={isOk ? data : []}
 				/>
 			)}
 			<Textarea

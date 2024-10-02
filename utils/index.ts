@@ -1,3 +1,10 @@
+export function capitalize(name: string) {
+	return name
+		.split(" ")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
+}
+
 export function formatTime(timeInMinutes: number) {
 	if (timeInMinutes < 60) {
 		return `${timeInMinutes}m`;

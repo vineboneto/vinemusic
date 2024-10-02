@@ -1,11 +1,11 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "cd07f80f-e596-4c3e-a9dd-eb49427feabd",
+  "id": "dc173d1d-4996-430e-91d0-a8843652a3b2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "music": {
-      "name": "music",
+    "instrument": {
+      "name": "instrument",
       "columns": {
         "id": {
           "name": "id",
@@ -18,7 +18,31 @@
           "name": "instrument",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "instrument_instrument_unique": {
+          "name": "instrument_instrument_unique",
+          "columns": [
+            "instrument"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "music": {
+      "name": "music",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
           "autoincrement": false
         },
         "observation": {
@@ -28,11 +52,18 @@
           "notNull": false,
           "autoincrement": false
         },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "start_date": {
           "name": "start_date",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "end_date": {
@@ -40,6 +71,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
+          "autoincrement": false
+        },
+        "id_instrument": {
+          "name": "id_instrument",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -60,7 +98,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "music_id_instrument_instrument_id_fk": {
+          "name": "music_id_instrument_instrument_id_fk",
+          "tableFrom": "music",
+          "tableTo": "instrument",
+          "columnsFrom": [
+            "id_instrument"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }

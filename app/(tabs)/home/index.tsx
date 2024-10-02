@@ -52,7 +52,7 @@ export default function Index() {
 					openFilter={() => setVisibleSearch(true)}
 					openReport={() => setVisibleReport(true)}
 				/>
-				<Title hasValue={isUndefined === false} />
+				<Title hasValue={isUndefined} />
 				<SafeAreaView>
 					<FlatList
 						data={data}

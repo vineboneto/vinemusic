@@ -42,10 +42,11 @@ export function Card({
 					style={{
 						fontFamily: Font.InterRegular,
 						fontSize: 25,
+						textTransform: "capitalize",
 					}}
 					numberOfLines={1}
 				>
-					{formatText(instrument)}{" "}
+					{formatText(instrument.name)}{" "}
 					{status === "pendent" ? "∞" : formatTime(timeInMinutes)}
 				</Text>
 				<Text

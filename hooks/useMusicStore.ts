@@ -1,12 +1,12 @@
 import { db } from "@/db/client";
-import { music, type MusicSchema } from "@/db/schema";
+import { instrument, music, type MusicSchema } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 
 export function useMusicStore() {
 	async function create(
 		values: Pick<
-			MusicSchema,
-			"observation" | "instrument" | "status" | "startDate"
+			typeof music.$inferInsert,
+			"observation" | "idInstrument" | "status" | "startDate"
 		>,
 	) {
 		const data = await db.insert(music).values(values).returning();
@@ -29,13 +29,13 @@ export function useMusicStore() {
 	async function update({
 		endDate,
 		id,
-		instrument,
+		idInstrument,
 		observation,
 		startDate,
 	}: Required<
 		Pick<
-			MusicSchema,
-			"endDate" | "id" | "startDate" | "observation" | "instrument"
+			typeof music.$inferInsert,
+			"endDate" | "id" | "startDate" | "observation" | "idInstrument"
 		>
 	>) {
 		await db
@@ -43,43 +43,55 @@ export function useMusicStore() {
 			.set({
 				startDate,
 				endDate,
-				instrument,
+				idInstrument,
 				observation,
 			})
 			.where(eq(music.id, id));
 	}
 
-	async function fetchById(id: number): Promise<MusicSchema | undefined> {
+	async function fetchById(id: number) {
 		try {
-			return db.select().from(music).where(eq(music.id, id)).get() as
-				| MusicSchema
-				| undefined;
+			return db
+				.select({
+					id: music.id,
+					observation: music.observation,
+					startDate: music.startDate,
+					endDate: music.endDate,
+					status: music.status,
+					instrument: {
+						id: instrument.id,
+						name: instrument.name,
+					},
+				})
+				.from(music)
+				.innerJoin(instrument, eq(music.idInstrument, instrument.id))
+				.where(eq(music.id, id))
+				.get() as MusicSchema;
 		} catch (err) {
 			return;
 		}
 	}
 
-	async function fetch(): Promise<MusicSchema[]> {
+	async function fetch() {
 		try {
-			return db
-				.select()
+			const data = db
+				.select({
+					id: music.id,
+					observation: music.observation,
+					startDate: music.startDate,
+					endDate: music.endDate,
+					status: music.status,
+					instrument: {
+						id: instrument.id,
+						name: instrument.name,
+					},
+				})
 				.from(music)
+				.innerJoin(instrument, eq(music.idInstrument, instrument.id))
 				.orderBy(desc(music.createdAt))
 				.limit(20)
 				.all() as MusicSchema[];
-		} catch (err) {
-			return [];
-		}
-	}
-
-	async function fetchDistinctInstruments() {
-		const statment = db
-			.selectDistinct({ instrument: music.instrument })
-			.from(music)
-			.orderBy(desc(music.createdAt));
-
-		try {
-			return statment.all();
+			return data;
 		} catch (err) {
 			return [];
 		}
@@ -108,7 +120,6 @@ export function useMusicStore() {
 		deleteAll,
 		finish,
 		deleteById,
-		fetchDistinctInstruments,
 		update,
 	};
 }

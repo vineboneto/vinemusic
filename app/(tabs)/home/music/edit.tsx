@@ -6,6 +6,7 @@ import { Select } from "@/components/form/select";
 import { Textarea } from "@/components/form/textarea";
 import { Loading } from "@/components/loading";
 import { useMutation, useQuery } from "@/hooks/query";
+import { useInstrumentStore } from "@/hooks/useInstrumentStore";
 import { useMusicStore } from "@/hooks/useMusicStore";
 import { date } from "@/utils/date";
 import { router, useLocalSearchParams } from "expo-router";
@@ -35,14 +36,16 @@ export default function Index() {
 	});
 
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const { fetchById, fetchDistinctInstruments, update } = useMusicStore();
+	const { options: fetchOptions, create: createInstrument } =
+		useInstrumentStore();
+	const { fetchById, update } = useMusicStore();
 	const { mutate } = useMutation<
 		unknown,
 		{
 			startDate: Date;
 			endDate: Date;
 			observation: string | null;
-			instrument: string;
+			idInstrument: number;
 			id: number;
 		}
 	>({
@@ -73,13 +76,13 @@ export default function Index() {
 		},
 	});
 	const { data: options, isOk: isOkOptions } = useQuery({
-		fn: fetchDistinctInstruments,
+		fn: fetchOptions,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (isOk) {
-			setInstrument(data.instrument);
+			setInstrument(data.instrument.id.toString());
 			setObservation(data.observation || "");
 			setDateInitial({ date: data.startDate, open: false });
 			setDateFinal({ date: data.endDate || undefined, open: false });
@@ -100,7 +103,7 @@ export default function Index() {
 		return <Text>Data não encontrado</Text>;
 	}
 
-	const submit = () => {
+	const submit = async () => {
 		if (!id) return;
 
 		if (!instrument?.trim()) {
@@ -150,8 +153,9 @@ export default function Index() {
 		}
 
 		if (isNewable) {
+			const instrument = await createInstrument({ name: instrumentText });
 			return mutate({
-				instrument: instrumentText,
+				idInstrument: instrument.id,
 				observation,
 				startDate,
 				endDate,
@@ -160,7 +164,7 @@ export default function Index() {
 		}
 
 		return mutate({
-			instrument,
+			idInstrument: Number(instrument),
 			observation,
 			startDate,
 			endDate,
@@ -191,14 +195,7 @@ export default function Index() {
 						placeholder="Selecione um Instrumento"
 						value={instrument}
 						onChange={(v) => setInstrument(v)}
-						options={
-							isOkOptions
-								? options.map(({ instrument }) => ({
-										label: instrument,
-										value: instrument,
-									}))
-								: []
-						}
+						options={isOkOptions ? options : []}
 					/>
 				)}
 			</View>
