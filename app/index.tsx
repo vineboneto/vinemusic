@@ -1,20 +1,18 @@
 import React from "react";
 import { Redirect } from "expo-router";
-import { useSession } from "@/context/auth";
-
-import { ActivityIndicator, View } from "react-native";
+import { useAuth } from "@clerk/clerk-expo";
 import { Loading } from "@/components/loading";
 
 export default function StartPage() {
-	const { session, isLoading } = useSession();
+	const { isSignedIn, isLoaded } = useAuth();
 
-	if (isLoading) {
+	if (!isLoaded) {
 		return <Loading />;
 	}
 
-	if (!session) {
-		return <Redirect href="/signin" />;
+	if (isSignedIn) {
+		return <Redirect href="/home" />;
 	}
 
-	return <Redirect href="/home" />;
+	return <Redirect href="/signin" />;
 }

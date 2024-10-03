@@ -1,4 +1,4 @@
-import { isNotNull, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const music = sqliteTable("music", {
@@ -8,6 +8,7 @@ export const music = sqliteTable("music", {
 	startDate: integer("start_date", { mode: "timestamp_ms" }).notNull(),
 	endDate: integer("end_date", { mode: "timestamp" }),
 	totalInMinutes: integer("minutes").default(0),
+	idUser: text("id_user").notNull(),
 	idInstrument: integer("id_instrument")
 		.notNull()
 		.references(() => instrument.id),
@@ -22,6 +23,7 @@ export const music = sqliteTable("music", {
 export const instrument = sqliteTable("instrument", {
 	id: integer("id").primaryKey(),
 	name: text("instrument").notNull().unique(),
+	idUser: text("id_user").notNull(),
 });
 
 type Music = Omit<

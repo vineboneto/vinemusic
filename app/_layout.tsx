@@ -1,16 +1,42 @@
-import { Stack } from "expo-router";
+import { router, Slot, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Font } from "@/constants/Font";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { StatusBar } from "expo-status-bar";
-import { SessionProvider } from "@/context/auth";
 import migrations from "@/drizzle/migrations";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { db } from "@/db/client";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { Loading } from "@/components/loading";
+import { tokenCache } from "@/storage/tokenCache";
 
 SplashScreen.preventAutoHideAsync();
+
+const PUBLIC_CLERK_PUBLISHABLE_KEY = process.env
+	.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
+
+function Layout() {
+	const { isSignedIn, isLoaded } = useAuth();
+
+	useEffect(() => {
+		if (!isLoaded) return;
+
+		if (isSignedIn) {
+			router.replace({ pathname: "/home" });
+		} else {
+			router.replace({ pathname: "/signin" });
+		}
+	}, [isSignedIn, isLoaded]);
+
+	return (
+		<>
+			<StatusBar translucent />
+			{isLoaded ? <Slot /> : <Loading />}
+		</>
+	);
+}
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
@@ -23,6 +49,7 @@ export default function RootLayout() {
 
 	const { success: hasRunMigrations, error: runningMigrationError } =
 		useMigrations(db, migrations);
+
 	useEffect(() => {
 		if (runningMigrationError) throw runningMigrationError;
 	}, [runningMigrationError]);
@@ -38,13 +65,13 @@ export default function RootLayout() {
 	}
 
 	return (
-		<SessionProvider>
+		<ClerkProvider
+			publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}
+			tokenCache={tokenCache}
+		>
 			<AlertNotificationRoot>
-				<StatusBar translucent />
-				<Stack screenOptions={{ headerShown: false }}>
-					<Stack.Screen name="(tabs)" />
-				</Stack>
+				<Layout />
 			</AlertNotificationRoot>
-		</SessionProvider>
+		</ClerkProvider>
 	);
 }

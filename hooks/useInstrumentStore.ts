@@ -1,12 +1,22 @@
 import { db } from "@/db/client";
 import { instrument } from "@/db/schema";
 import { capitalize } from "@/utils";
+import { useUser } from "@clerk/clerk-expo";
+import { eq } from "drizzle-orm";
 
 export function useInstrumentStore() {
-	async function create(values: Omit<typeof instrument.$inferInsert, "id">) {
+	const { user } = useUser();
+
+	async function create(
+		values: Omit<typeof instrument.$inferInsert, "id" | "idUser">,
+	) {
 		const data = await db
 			.insert(instrument)
-			.values({ ...values, name: values.name.trim().toLowerCase() })
+			.values({
+				...values,
+				idUser: user?.id || "offline",
+				name: values.name.trim().toLowerCase(),
+			})
 			.onConflictDoUpdate({
 				target: instrument.name,
 				set: {
@@ -19,7 +29,12 @@ export function useInstrumentStore() {
 
 	async function fetch() {
 		try {
-			const data = db.select().from(instrument).limit(20).all();
+			const data = db
+				.select()
+				.from(instrument)
+				.where(eq(instrument.idUser, user?.id || "offline"))
+				.limit(20)
+				.all();
 			return data.map((e) => ({ ...e, name: capitalize(e.name) }));
 		} catch (err) {
 			return [];

@@ -2,6 +2,7 @@ import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { type DateValue, InputDate } from "@/components/form/date";
 import { Label } from "@/components/form/label";
+import * as FileSystem from "expo-file-system";
 import { ButtonActionsGroup } from "@/components/home/button-action";
 import { Card } from "@/components/home/card";
 import { Font } from "@/constants/Font";
@@ -9,8 +10,15 @@ import { useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
 import { router } from "expo-router";
 import { useState } from "react";
-import { FlatList, SafeAreaView, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	FlatList,
+	SafeAreaView,
+	Text,
+	View,
+} from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import { Colors } from "@/constants/Colors";
 
 function Title({ hasValue }: { hasValue: boolean }) {
 	return (
@@ -43,7 +51,7 @@ export default function Index() {
 	});
 
 	const { fetch } = useMusicStore();
-	const { data, isUndefined, refetch } = useQuery({
+	const { data, isUndefined, isLoading, refetch } = useQuery({
 		fn: () => fetch({ startDate: dateInitial.date, endDate: dateFinal.date }),
 	});
 
@@ -59,6 +67,19 @@ export default function Index() {
 			});
 		refetch();
 		setVisibleSearch(false);
+	};
+
+	const _list = async () => {
+		try {
+			// Caminho para o diretório SQLite
+			const sqliteDirectory = `${FileSystem.documentDirectory}SQLite/`;
+
+			// Listar os arquivos no diretório SQLite
+			const files = await FileSystem.readDirectoryAsync(sqliteDirectory);
+			console.log("Arquivos no diretório SQLite:", files);
+		} catch (error) {
+			console.error("Erro ao listar arquivos no diretório SQLite:", error);
+		}
 	};
 
 	const report = () => {
@@ -99,14 +120,18 @@ export default function Index() {
 					openFilter={() => setVisibleSearch(true)}
 					openReport={() => setVisibleReport(true)}
 				/>
-				<Title hasValue={isUndefined} />
+				<Title hasValue={!isUndefined && data.length > 0} />
 				<SafeAreaView>
-					<FlatList
-						data={data}
-						renderItem={({ item }) => <Card item={item} />}
-						keyExtractor={(item, idx) => item.id.toString()}
-						ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-					/>
+					{isLoading ? (
+						<ActivityIndicator color={Colors.light.text} size="large" />
+					) : (
+						<FlatList
+							data={data}
+							renderItem={({ item }) => <Card item={item} />}
+							keyExtractor={(item, idx) => item.id.toString()}
+							ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+						/>
+					)}
 				</SafeAreaView>
 			</View>
 			<Anchor

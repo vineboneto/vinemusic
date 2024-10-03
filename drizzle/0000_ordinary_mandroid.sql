@@ -1,15 +1,18 @@
 CREATE TABLE `instrument` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`instrument` text NOT NULL
+	`instrument` text NOT NULL,
+	`id_user` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `music` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`observation` text,
 	`status` text NOT NULL,
+	`minutes` integer NOT NULL DEFAULT 0,
 	`start_date` integer NOT NULL,
 	`end_date` integer,
 	`id_instrument` integer NOT NULL,
+	`id_user` text NOT NULL,
 	`created_at` integer DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updated_at` integer DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	FOREIGN KEY (`id_instrument`) REFERENCES `instrument`(`id`) ON UPDATE no action ON DELETE no action

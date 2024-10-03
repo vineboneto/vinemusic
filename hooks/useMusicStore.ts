@@ -1,16 +1,22 @@
 import { db } from "@/db/client";
 import { instrument, music, type MusicSchema } from "@/db/schema";
 import { date } from "@/utils/date";
+import { useUser } from "@clerk/clerk-expo";
 import { and, between, desc, eq, gte, lte, sql, sum } from "drizzle-orm";
 
 export function useMusicStore() {
+	const { user } = useUser();
+
 	async function create(
 		values: Pick<
 			typeof music.$inferInsert,
 			"observation" | "idInstrument" | "status" | "startDate"
 		>,
 	) {
-		const data = await db.insert(music).values(values).returning();
+		const data = await db
+			.insert(music)
+			.values({ ...values, idUser: user?.id || "offline" })
+			.returning();
 		return data[0];
 	}
 
@@ -26,7 +32,7 @@ export function useMusicStore() {
 				totalInMinutes,
 				status: "finish",
 			})
-			.where(eq(music.id, id));
+			.where(and(eq(music.id, id), eq(music.idUser, user?.id || "offline")));
 	}
 
 	async function update({
@@ -56,7 +62,7 @@ export function useMusicStore() {
 				idInstrument,
 				observation,
 			})
-			.where(eq(music.id, id));
+			.where(and(eq(music.id, id), eq(music.idUser, user?.id || "offline")));
 	}
 
 	async function fetchById(id: number) {
@@ -75,7 +81,7 @@ export function useMusicStore() {
 				})
 				.from(music)
 				.innerJoin(instrument, eq(music.idInstrument, instrument.id))
-				.where(eq(music.id, id))
+				.where(and(eq(music.id, id), eq(music.idUser, user?.id || "offline")))
 				.get() as MusicSchema;
 		} catch (err) {
 			return;
@@ -102,6 +108,7 @@ export function useMusicStore() {
 				and(
 					gte(music.startDate, date.start(startDate, { firstDayMonth: true })),
 					lte(music.startDate, date.end(endDate, { lastDayMonth: true })),
+					eq(music.idUser, user?.id || "offline"),
 				),
 			)
 			.all()
@@ -131,19 +138,19 @@ export function useMusicStore() {
 			})
 			.from(music)
 			.innerJoin(instrument, eq(music.idInstrument, instrument.id))
+			.where(
+				and(
+					eq(music.idUser, user?.id || "offline"),
+					startDate &&
+						endDate &&
+						between(music.startDate, date.start(startDate), date.end(endDate)),
+				),
+			)
 			.orderBy(desc(music.createdAt))
 			.limit(20);
 
 		try {
-			if (startDate && endDate) {
-				return statement
-					.where(
-						between(music.startDate, date.start(startDate), date.end(endDate)),
-					)
-					.all() as MusicSchema[];
-			}
-			const data = statement.all() as MusicSchema[];
-			return data;
+			return statement.all() as MusicSchema[];
 		} catch (err) {
 			return [];
 		}
@@ -151,17 +158,12 @@ export function useMusicStore() {
 
 	async function deleteById(id: number) {
 		try {
-			return db.delete(music).where(eq(music.id, id)).returning();
+			return db
+				.delete(music)
+				.where(and(eq(music.id, id), eq(music.idUser, user?.id || "offline")))
+				.returning();
 		} catch (err) {
 			return null;
-		}
-	}
-
-	async function deleteAll() {
-		try {
-			return db.delete(music).returning();
-		} catch (err) {
-			return [];
 		}
 	}
 
@@ -169,7 +171,6 @@ export function useMusicStore() {
 		create,
 		fetch,
 		fetchById,
-		deleteAll,
 		finish,
 		deleteById,
 		report,
