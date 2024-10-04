@@ -5,12 +5,14 @@ import { Textarea } from "@/components/form/textarea";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useInstrumentStore } from "@/hooks/useInstrumentStore";
 import { useMusicStore } from "@/hooks/useMusicStore";
+import { useTheme } from "@/hooks/useTheme";
 import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function Index() {
+	const { ColorTheme } = useTheme();
 	const [instrument, setInstrument] = useState<string | null>(null);
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");

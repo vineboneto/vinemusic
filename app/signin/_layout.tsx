@@ -1,15 +1,21 @@
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import Stack from "expo-router/stack";
 
 export default function StackLayout() {
+	const { ColorTheme } = useTheme();
+
 	return (
 		<Stack
 			screenOptions={{
 				headerTitleAlign: "center",
 				headerTitle: () => <></>,
+				headerStyle: {
+					backgroundColor: ColorTheme.background,
+				},
+				headerTintColor: ColorTheme.text,
 				headerShadowVisible: false,
 				headerBackTitleVisible: false,
-				contentStyle: { backgroundColor: Colors.light.background },
+				contentStyle: { backgroundColor: ColorTheme.background },
 			}}
 		/>
 	);

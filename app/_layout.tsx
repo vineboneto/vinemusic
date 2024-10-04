@@ -11,6 +11,7 @@ import { db } from "@/db/client";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { Loading } from "@/components/loading";
 import { tokenCache } from "@/storage/tokenCache";
+import { ThemeProvider, useTheme } from "@/hooks/useTheme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,6 +19,7 @@ const PUBLIC_CLERK_PUBLISHABLE_KEY = process.env
 	.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
 
 function Layout() {
+	const { theme } = useTheme();
 	const { isSignedIn, isLoaded } = useAuth();
 
 	useEffect(() => {
@@ -32,8 +34,19 @@ function Layout() {
 
 	return (
 		<>
-			<StatusBar translucent />
-			{isLoaded ? <Slot /> : <Loading />}
+			{isLoaded ? (
+				<>
+					{theme && (
+						<StatusBar
+							translucent
+							style={theme === "dark" ? "light" : "dark"}
+						/>
+					)}
+					<Slot />
+				</>
+			) : (
+				<Loading />
+			)}
 		</>
 	);
 }
@@ -69,9 +82,11 @@ export default function RootLayout() {
 			publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}
 			tokenCache={tokenCache}
 		>
-			<AlertNotificationRoot>
-				<Layout />
-			</AlertNotificationRoot>
+			<ThemeProvider>
+				<AlertNotificationRoot>
+					<Layout />
+				</AlertNotificationRoot>
+			</ThemeProvider>
 		</ClerkProvider>
 	);
 }

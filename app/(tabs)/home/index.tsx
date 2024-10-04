@@ -18,11 +18,14 @@ import {
 	View,
 } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
+import { StatusBar } from "expo-status-bar";
 
 function Title({ hasValue }: { hasValue: boolean }) {
+	const { ColorTheme } = useTheme();
+
 	return (
-		<Text style={{ fontFamily: Font.InterRegular }}>
+		<Text style={{ fontFamily: Font.InterRegular, color: ColorTheme.text }}>
 			{hasValue
 				? "Atividades de estudo mais recentes ..."
 				: "Nenhuma atividade encontrada"}
@@ -31,6 +34,7 @@ function Title({ hasValue }: { hasValue: boolean }) {
 }
 
 export default function Index() {
+	const { ColorTheme, theme } = useTheme();
 	const [visibleSearch, setVisibleSearch] = useState(false);
 	const [visibleReport, setVisibleReport] = useState(false);
 	const [dateInitial, setDateInitial] = useState<DateValue>({
@@ -106,6 +110,7 @@ export default function Index() {
 
 	return (
 		<>
+			<StatusBar translucent style={theme === "dark" ? "light" : "dark"} />
 			<View
 				style={{
 					flex: 1,
@@ -123,7 +128,7 @@ export default function Index() {
 				<Title hasValue={!isUndefined && data.length > 0} />
 				<SafeAreaView>
 					{isLoading ? (
-						<ActivityIndicator color={Colors.light.text} size="large" />
+						<ActivityIndicator color={ColorTheme.text} size="large" />
 					) : (
 						<FlatList
 							data={data}
@@ -140,7 +145,13 @@ export default function Index() {
 				height={450}
 			>
 				<View style={{ rowGap: 20 }}>
-					<Text style={{ fontFamily: Font.InterMedium, fontSize: 20 }}>
+					<Text
+						style={{
+							fontFamily: Font.InterMedium,
+							fontSize: 20,
+							color: ColorTheme.text,
+						}}
+					>
 						Filtrar Atividades
 					</Text>
 					<View>
@@ -178,7 +189,13 @@ export default function Index() {
 				height={400}
 			>
 				<View style={{ rowGap: 20 }}>
-					<Text style={{ fontFamily: Font.InterMedium, fontSize: 20 }}>
+					<Text
+						style={{
+							fontFamily: Font.InterMedium,
+							fontSize: 20,
+							color: ColorTheme.text,
+						}}
+					>
 						Relatório dos meus estudos
 					</Text>
 					<View>

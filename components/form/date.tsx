@@ -1,5 +1,5 @@
-import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
+import { useTheme } from "@/hooks/useTheme";
 import { formatDateOnly, formatTimeOnly } from "@/utils";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 
@@ -15,6 +15,8 @@ type Props = {
 };
 
 export function InputDate({ value, setValue, mode, placeholder }: Props) {
+	const { ColorTheme } = useTheme();
+
 	function formatInput() {
 		if (mode === "date") {
 			return value.date ? formatDateOnly(value.date) : placeholder;
@@ -32,7 +34,7 @@ export function InputDate({ value, setValue, mode, placeholder }: Props) {
 			<Pressable
 				onPress={() => setValue((old) => ({ ...old, open: true }))}
 				style={{
-					backgroundColor: Colors.light.input,
+					backgroundColor: ColorTheme.input,
 					paddingHorizontal: 20,
 					paddingVertical: 10,
 					height: 55,
@@ -41,16 +43,23 @@ export function InputDate({ value, setValue, mode, placeholder }: Props) {
 					borderRadius: 8,
 				}}
 			>
-				<Text style={{ fontFamily: Font.InterRegular }}>{formatInput()}</Text>
+				<Text
+					style={{
+						fontFamily: Font.InterRegular,
+						color: ColorTheme.text,
+					}}
+				>
+					{formatInput()}
+				</Text>
 
 				{value.open && (
 					<RNDateTimePicker
 						mode={mode}
-						positiveButton={{ textColor: Colors.light.background }}
-						negativeButton={{ textColor: Colors.light.background }}
-						neutralButton={{ textColor: Colors.light.background }}
-						textColor={Colors.light.background}
-						accentColor={Colors.light.background}
+						positiveButton={{ textColor: ColorTheme.background }}
+						negativeButton={{ textColor: ColorTheme.background }}
+						neutralButton={{ textColor: ColorTheme.background }}
+						textColor={ColorTheme.background}
+						accentColor={ColorTheme.background}
 						display="spinner"
 						timeZoneName="America/Sao_Paulo"
 						themeVariant="light"

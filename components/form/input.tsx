@@ -1,17 +1,19 @@
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import type { ComponentProps } from "react";
 import { TextInput } from "react-native";
 
 export function Input({ ...rest }: ComponentProps<typeof TextInput>) {
+	const { ColorTheme } = useTheme();
+
 	return (
 		<TextInput
 			editable
-			selectionColor={Colors.light.text}
-			placeholderTextColor={Colors.light.text}
+			selectionColor={ColorTheme.text}
+			placeholderTextColor={ColorTheme.text}
 			style={{
-				backgroundColor: Colors.light.input,
+				backgroundColor: ColorTheme.input,
 				padding: 10,
-				color: Colors.light.text,
+				color: ColorTheme.text,
 				borderRadius: 8,
 			}}
 			{...rest}

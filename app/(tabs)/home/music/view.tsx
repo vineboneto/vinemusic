@@ -1,14 +1,15 @@
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { Loading } from "@/components/loading";
-import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
+import { useTheme } from "@/hooks/useTheme";
 import { formatDate, formatTime } from "@/utils";
 import { date } from "@/utils/date";
 import Feather from "@expo/vector-icons/Feather";
 import { router, useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
@@ -17,9 +18,18 @@ function GroupText({
 	title,
 	description,
 }: { title: string; description: string }) {
+	const { ColorTheme, theme } = useTheme();
+
 	return (
 		<View>
-			<Text style={{ fontFamily: Font.InterRegular, fontSize: 16 }}>
+			<StatusBar translucent style={theme === "dark" ? "light" : "dark"} />
+			<Text
+				style={{
+					fontFamily: Font.InterRegular,
+					fontSize: 16,
+					color: ColorTheme.text,
+				}}
+			>
 				{title}:
 			</Text>
 			<Text
@@ -27,6 +37,7 @@ function GroupText({
 					fontFamily: Font.InterSemiBold,
 					fontSize: 30,
 					textTransform: "capitalize",
+					color: ColorTheme.text,
 				}}
 				numberOfLines={1}
 			>
@@ -37,6 +48,7 @@ function GroupText({
 }
 
 export default function Index() {
+	const { ColorTheme } = useTheme();
 	const [visible, setVisible] = useState(false);
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { fetchById, deleteById } = useMusicStore();
@@ -106,7 +118,13 @@ export default function Index() {
 							alignItems: "center",
 						}}
 					>
-						<Text style={{ fontFamily: Font.InterSemiBold, fontSize: 40 }}>
+						<Text
+							style={{
+								fontFamily: Font.InterSemiBold,
+								fontSize: 40,
+								color: ColorTheme.text,
+							}}
+						>
 							Atividade Concluída
 						</Text>
 						<View
@@ -120,7 +138,7 @@ export default function Index() {
 								<Pressable onPress={() => setVisible(true)}>
 									<Feather
 										name="delete"
-										color={Colors.light.button.container.danger}
+										color={ColorTheme.button.container.danger}
 										size={43}
 									/>
 								</Pressable>
@@ -134,7 +152,7 @@ export default function Index() {
 								>
 									<Feather
 										name="edit"
-										color={Colors.light.button.container.sucess}
+										color={ColorTheme.button.container.sucess}
 										size={40}
 									/>
 								</Pressable>
@@ -159,6 +177,7 @@ export default function Index() {
 									fontSize: 24,
 									fontFamily: Font.InterRegular,
 									textAlign: "center",
+									color: ColorTheme.text,
 								}}
 							>
 								Tempo praticado:
@@ -168,6 +187,7 @@ export default function Index() {
 									fontSize: 64,
 									fontFamily: Font.InterRegular,
 									textAlign: "center",
+									color: ColorTheme.text,
 								}}
 							>
 								{formatTime(timeInMinutes)}
@@ -175,14 +195,20 @@ export default function Index() {
 						</View>
 					</View>
 					<View>
-						<Text>{data.observation}</Text>
+						<Text style={{ color: ColorTheme.text }}>{data.observation}</Text>
 					</View>
 				</View>
 			</ScrollView>
 
 			<Anchor visible={visible} onClose={() => setVisible(false)}>
 				<View>
-					<Text style={{ fontFamily: Font.InterMedium, fontSize: 20 }}>
+					<Text
+						style={{
+							fontFamily: Font.InterMedium,
+							fontSize: 20,
+							color: ColorTheme.text,
+						}}
+					>
 						Tem certeza que deseja excluir essa atividade? Essa operação é
 						irreversível!
 					</Text>

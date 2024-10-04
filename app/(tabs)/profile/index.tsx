@@ -1,5 +1,5 @@
-import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
+import { useTheme } from "@/hooks/useTheme";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 
 import Feather from "@expo/vector-icons/Feather";
@@ -18,6 +18,8 @@ const blurhash =
 	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 export default function Index() {
+	const { ColorTheme, theme, toggleTheme } = useTheme();
+
 	const { signOut } = useAuth();
 	const { user } = useUser();
 
@@ -37,6 +39,7 @@ export default function Index() {
 							fontFamily: Font.InterSemiBold,
 							fontSize: 30,
 							textAlign: "center",
+							color: ColorTheme.text,
 						}}
 					>
 						Meus Dados
@@ -61,7 +64,13 @@ export default function Index() {
 							}}
 							transition={1000}
 						/>
-						<Text style={{ fontFamily: Font.InterRegular, fontSize: 20 }}>
+						<Text
+							style={{
+								fontFamily: Font.InterRegular,
+								fontSize: 20,
+								color: ColorTheme.text,
+							}}
+						>
 							{user?.fullName || ""}
 						</Text>
 
@@ -74,25 +83,34 @@ export default function Index() {
 							}}
 						>
 							<Pressable
+								onPress={toggleTheme}
 								style={{
+									...(theme === "dark" && {
+										borderWidth: 1,
+										borderColor: ColorTheme.text,
+										borderRadius: 200,
+									}),
 									padding: 10,
 									alignItems: "center",
 									justifyContent: "center",
 								}}
 							>
-								<Ionicons name="moon" size={25} color={Colors.light.text} />
+								<Ionicons name="moon" size={25} color={ColorTheme.text} />
 							</Pressable>
 							<Pressable
+								onPress={toggleTheme}
 								style={{
+									...(theme === "light" && {
+										borderWidth: 1,
+										borderColor: ColorTheme.text,
+										borderRadius: 200,
+									}),
 									padding: 10,
-									borderWidth: 1,
-									borderColor: Colors.light.text,
-									borderRadius: 200,
 									alignItems: "center",
 									justifyContent: "center",
 								}}
 							>
-								<Ionicons name="sunny" size={30} color={Colors.light.text} />
+								<Ionicons name="sunny" size={30} color={ColorTheme.text} />
 							</Pressable>
 						</View>
 					</View>
@@ -116,9 +134,16 @@ export default function Index() {
 							<Feather
 								name="log-out"
 								size={20}
+								color={ColorTheme.text}
 								style={{ transform: [{ rotate: "180deg" }] }}
 							/>
-							<Text style={{ fontFamily: Font.InterRegular, fontSize: 16 }}>
+							<Text
+								style={{
+									fontFamily: Font.InterRegular,
+									fontSize: 16,
+									color: ColorTheme.text,
+								}}
+							>
 								Sair
 							</Text>
 						</Pressable>

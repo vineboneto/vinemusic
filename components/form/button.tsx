@@ -1,5 +1,5 @@
-import { Colors } from "@/constants/Colors";
 import { Font } from "@/constants/Font";
+import { useTheme } from "@/hooks/useTheme";
 import type { ComponentProps } from "react";
 
 import {
@@ -28,6 +28,8 @@ export function Button({
 	startIcon,
 	...rest
 }: Props) {
+	const { ColorTheme } = useTheme();
+
 	return (
 		<Pressable
 			style={[
@@ -40,13 +42,13 @@ export function Button({
 					paddingVertical: 15,
 					borderRadius: 8,
 					backgroundColor:
-						Colors.light.button.container[disabled ? "disabled" : variant], // Define a cor de fundo de acordo com o variant
+						ColorTheme.button.container[disabled ? "disabled" : variant], // Define a cor de fundo de acordo com o variant
 				},
 			]}
 			{...rest}
 		>
 			{isLoading ? (
-				<ActivityIndicator color={Colors.light.background} />
+				<ActivityIndicator color={ColorTheme.text} />
 			) : (
 				<>
 					{startIcon && <View style={{ marginRight: 10 }}>{startIcon}</View>}
@@ -54,7 +56,7 @@ export function Button({
 						style={{
 							fontFamily: Font.InterRegular,
 							fontSize: 16,
-							color: Colors.light.button.text[disabled ? "disabled" : variant],
+							color: ColorTheme.button.text[disabled ? "disabled" : variant],
 						}}
 					>
 						{children}

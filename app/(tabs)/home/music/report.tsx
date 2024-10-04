@@ -2,9 +2,11 @@ import { Loading } from "@/components/loading";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
+import { useTheme } from "@/hooks/useTheme";
 import { formatTime } from "@/utils";
 import { date } from "@/utils/date";
 import { useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
@@ -15,6 +17,8 @@ function format(d: Date) {
 }
 
 export default function Index() {
+	const { ColorTheme, theme } = useTheme();
+
 	const params = useLocalSearchParams<{
 		startDate: string;
 		endDate: string;
@@ -34,11 +38,11 @@ export default function Index() {
 	}
 
 	if (isError) {
-		return <Text>{error.message}</Text>;
+		return <Text style={{ color: ColorTheme.text }}>{error.message}</Text>;
 	}
 
 	if (isUndefined) {
-		return <Text>Data não encontrado</Text>;
+		return <Text style={{ color: ColorTheme.text }}>Data não encontrado</Text>;
 	}
 
 	const totalMinutes = data.reduce((acc, item) => acc + item.totalMinutes, 0);
@@ -52,22 +56,57 @@ export default function Index() {
 				rowGap: 20,
 			}}
 		>
-			<Text style={{ fontFamily: Font.InterSemiBold, fontSize: 40 }}>
+			<StatusBar translucent style={theme === "dark" ? "light" : "dark"} />
+			<Text
+				style={{
+					fontFamily: Font.InterSemiBold,
+					fontSize: 40,
+					color: ColorTheme.text,
+				}}
+			>
 				Relatório de Práticas
 			</Text>
 
-			<Text style={{ fontFamily: Font.InterRegular, fontSize: 18 }}>
+			<Text
+				style={{
+					fontFamily: Font.InterRegular,
+					fontSize: 18,
+					color: ColorTheme.text,
+				}}
+			>
 				{format(date.start(startDate, { firstDayMonth: true }))} até{" "}
 				{format(date.end(endDate, { lastDayMonth: true }))}
 			</Text>
 			<BarChart
 				height={250}
+				color={ColorTheme.text}
+				capColor={ColorTheme.text}
+				topColor={ColorTheme.text}
+				sideColor={ColorTheme.text}
+				rulesColor={ColorTheme.text}
+				frontColor={ColorTheme.text}
+				xAxisColor={ColorTheme.text}
+				yAxisColor={ColorTheme.text}
+				barBorderColor={ColorTheme.text}
+				xAxisIndicesColor={ColorTheme.text}
+				yAxisIndicesColor={ColorTheme.text}
+				gradientColor={ColorTheme.text}
+				yAxisTextStyle={{ color: ColorTheme.text }}
+				verticalLinesColor={ColorTheme.text}
 				data={data.map((v) => ({
 					value: v.totalMinutes,
 					label: v.date.toLocaleString("pt-BR", {
 						month: "2-digit",
 						year: "2-digit",
 					}),
+					valurColor: ColorTheme.text,
+
+					valueTextStyle: {
+						color: ColorTheme.text,
+					},
+					labelTextStyle: {
+						color: ColorTheme.text,
+					},
 				}))}
 				spacing={35}
 				autoShiftLabels={false}
@@ -89,6 +128,7 @@ export default function Index() {
 							fontSize: 24,
 							fontFamily: Font.InterRegular,
 							textAlign: "center",
+							color: ColorTheme.text,
 						}}
 					>
 						Total praticado:
@@ -98,6 +138,7 @@ export default function Index() {
 							fontSize: 64,
 							fontFamily: Font.InterRegular,
 							textAlign: "center",
+							color: ColorTheme.text,
 						}}
 					>
 						{formatTime(totalMinutes)}

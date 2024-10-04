@@ -1,7 +1,5 @@
 import { Button } from "@/components/form/button";
-import { Input } from "@/components/form/input";
 import { Title } from "@/components/signin/title";
-import { Colors } from "@/constants/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useEffect, useState } from "react";
@@ -9,10 +7,13 @@ import { View } from "react-native";
 import { useOAuth } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { useTheme } from "@/hooks/useTheme";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Index() {
+	const { ColorTheme } = useTheme();
+
 	const [isLoading, setIsLoading] = useState(false);
 	const googleOAuth = useOAuth({ strategy: "oauth_google" });
 
@@ -62,11 +63,7 @@ export default function Index() {
 					isLoading={isLoading}
 					onPress={onGoogleSign}
 					startIcon={
-						<Ionicons
-							size={19}
-							name="logo-google"
-							color={Colors.light.background}
-						/>
+						<Ionicons size={19} name="logo-google" color={ColorTheme.text} />
 					}
 				>
 					Entrar com Google

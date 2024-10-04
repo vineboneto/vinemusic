@@ -1,19 +1,21 @@
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import type { ComponentProps } from "react";
 import { TextInput } from "react-native";
 
 export function Textarea({ ...rest }: ComponentProps<typeof TextInput>) {
+	const { ColorTheme } = useTheme();
+
 	return (
 		<TextInput
 			editable
 			textAlignVertical="top"
-			selectionColor={Colors.light.text}
-			placeholderTextColor={Colors.light.text}
+			selectionColor={ColorTheme.text}
+			placeholderTextColor={ColorTheme.text}
 			style={{
-				backgroundColor: Colors.light.input,
+				backgroundColor: ColorTheme.input,
 				paddingHorizontal: 20,
 				paddingVertical: 10,
-				color: Colors.light.text,
+				color: ColorTheme.text,
 				borderRadius: 8,
 			}}
 			multiline

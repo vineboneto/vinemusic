@@ -2,6 +2,7 @@ import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useMusicStore } from "@/hooks/useMusicStore";
+import { useTheme } from "@/hooks/useTheme";
 import { formatTextWithEllipsis } from "@/utils";
 import { date } from "@/utils/date";
 import { router, useLocalSearchParams } from "expo-router";
@@ -10,6 +11,7 @@ import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
 export default function Index() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const { ColorTheme } = useTheme();
 
 	const { finish, deleteById, fetchById } = useMusicStore();
 	const { mutate } = useMutation<"invalid" | "home" | "next" | "wait", Date>({
@@ -82,13 +84,20 @@ export default function Index() {
 			}}
 		>
 			<View>
-				<Text style={{ fontFamily: Font.InterSemiBold, fontSize: 40 }}>
+				<Text
+					style={{
+						fontFamily: Font.InterSemiBold,
+						fontSize: 40,
+						color: ColorTheme.text,
+					}}
+				>
 					Praticando
 				</Text>
 				<Text
 					style={{
 						fontFamily: Font.InterSemiBold,
 						fontSize: 40,
+						color: ColorTheme.text,
 						textTransform: "capitalize",
 					}}
 					numberOfLines={2}
@@ -98,7 +107,13 @@ export default function Index() {
 			</View>
 
 			<View>
-				<Text style={{ fontSize: 24, fontFamily: Font.InterRegular }}>
+				<Text
+					style={{
+						fontSize: 24,
+						fontFamily: Font.InterRegular,
+						color: ColorTheme.text,
+					}}
+				>
 					Inicio:{" "}
 					{data?.startDate.toLocaleString("pt-BR", {
 						dateStyle: "medium",

@@ -1,18 +1,26 @@
 import header from "@/components/header";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import { Stack } from "expo-router/stack";
-import { Pressable } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { Pressable, Text } from "react-native";
 
 export default function StackLayout() {
+	const { ColorTheme, theme } = useTheme();
+
 	return (
-		<Stack
-			screenOptions={{
-				...header,
-				headerBackTitleVisible: true,
-				headerLeft: ({ canGoBack, label, tintColor }) =>
-					canGoBack ? <Pressable>{label}</Pressable> : null,
-				contentStyle: { backgroundColor: Colors.light.background },
-			}}
-		/>
+		<>
+			<StatusBar translucent style={theme === "dark" ? "light" : "dark"} />
+			<Stack
+				screenOptions={{
+					...header(ColorTheme),
+
+					headerBackTitleVisible: true,
+					headerTintColor: ColorTheme.text,
+					headerLeft: ({ canGoBack, label }) =>
+						canGoBack ? <Pressable>{label}</Pressable> : null,
+					contentStyle: { backgroundColor: ColorTheme.background },
+				}}
+			/>
+		</>
 	);
 }

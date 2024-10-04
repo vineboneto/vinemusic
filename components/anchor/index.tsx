@@ -1,3 +1,4 @@
+import { type ThemeValue, useTheme } from "@/hooks/useTheme";
 import { useEffect, useRef, useState } from "react";
 import {
 	Animated,
@@ -19,12 +20,14 @@ type Props = {
 
 export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 	const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+	const { ColorTheme } = useTheme();
+	const styles = stylesFN(ColorTheme);
 
 	useEffect(() => {
 		if (visible) {
 			// Altera a cor da StatusBar quando o modal estiver visível
-			StatusBar.setBarStyle("light-content");
-			StatusBar.setBackgroundColor("rgba(0, 0, 0, 0.5)", true);
+			// StatusBar.setBarStyle("light-content");
+			// StatusBar.setBackgroundColor("rgba(0, 0, 0, 0.5)", true);
 			// Animação para mostrar o modal de baixo para cima
 			Animated.timing(slideAnim, {
 				toValue: 0,
@@ -33,8 +36,8 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 			}).start();
 		} else {
 			// Restaura a cor original da StatusBar
-			StatusBar.setBarStyle("dark-content");
-			StatusBar.setBackgroundColor("transparent", true);
+			// StatusBar.setBarStyle("dark-content");
+			// StatusBar.setBackgroundColor("transparent", true);
 			// Animação para esconder o modal
 			Animated.timing(slideAnim, {
 				toValue: screenHeight,
@@ -60,7 +63,7 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 						left: 0,
 						right: 0,
 						height,
-						backgroundColor: "#fff",
+						backgroundColor: ColorTheme.background,
 						borderTopLeftRadius: 20,
 						borderTopRightRadius: 20,
 						padding: 20,
@@ -74,30 +77,10 @@ export function Anchor({ visible, onClose, children, height = 300 }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	openButton: {
-		padding: 15,
-		backgroundColor: "#007BFF",
-		borderRadius: 5,
-	},
-	openButtonText: {
-		color: "#fff",
-		textAlign: "center",
-	},
-	overlay: {
-		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-	},
-	modalText: {
-		fontSize: 18,
-		marginBottom: 20,
-	},
-	closeButton: {
-		backgroundColor: "#FF0000",
-		padding: 10,
-		borderRadius: 5,
-	},
-	closeButtonText: {
-		color: "#fff",
-	},
-});
+const stylesFN = (theme: ThemeValue) =>
+	StyleSheet.create({
+		overlay: {
+			flex: 1,
+			backgroundColor: "rgba(0, 0, 0, 0.5)",
+		},
+	});

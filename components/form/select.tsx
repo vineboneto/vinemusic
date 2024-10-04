@@ -1,6 +1,5 @@
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import { Picker } from "@react-native-picker/picker";
-import { useRef } from "react";
 import { Pressable } from "react-native";
 
 type Props = {
@@ -20,12 +19,12 @@ export function Select({
 	options,
 	placeholder,
 }: Props) {
-	const ref = useRef<Picker<string | null> | null>(null);
+	const { ColorTheme } = useTheme();
 
 	return (
 		<Pressable
 			style={{
-				backgroundColor: Colors.light.input,
+				backgroundColor: ColorTheme.input,
 				width: "100%",
 				borderRadius: 8,
 				height: 55,
@@ -33,14 +32,17 @@ export function Select({
 		>
 			<Picker
 				selectedValue={value}
-				mode="dialog"
+				mode="dropdown"
 				numberOfLines={1}
 				onValueChange={(itemValue, itemIndex) => onChange(itemValue)}
 			>
 				<Picker.Item
 					color="gray"
 					style={{
+						padding: 0,
+						margin: 0,
 						borderRadius: 8,
+						backgroundColor: ColorTheme.cardContent,
 						fontSize: 15,
 					}}
 					label={placeholder}
@@ -49,9 +51,12 @@ export function Select({
 				/>
 				{newable && (
 					<Picker.Item
-						color={Colors.light.button.container.sucess}
+						color={ColorTheme.button.container.sucess}
 						style={{
 							borderRadius: 8,
+							padding: 0,
+							margin: 0,
+							backgroundColor: ColorTheme.cardContent,
 							fontSize: 15,
 						}}
 						label={labelNewable}
@@ -65,7 +70,10 @@ export function Select({
 							style={{
 								borderRadius: 8,
 								fontSize: 15,
-								color: Colors.light.text,
+								padding: 0,
+								margin: 0,
+								color: ColorTheme.text,
+								backgroundColor: ColorTheme.cardContent,
 							}}
 							key={v.value}
 							label={v.label}
