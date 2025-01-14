@@ -4,24 +4,34 @@ import { Select } from "@/components/form/select";
 import { Textarea } from "@/components/form/textarea";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useInstrumentStore } from "@/hooks/useInstrumentStore";
-import { useMusicStore } from "@/hooks/useMusicStore";
-import { useTheme } from "@/hooks/useTheme";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function Index() {
-	const { ColorTheme } = useTheme();
 	const [instrument, setInstrument] = useState<string | null>(null);
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");
-	const { create } = useMusicStore();
+	const { create } = usePracticeStore();
 	const { options, create: createInstrument } = useInstrumentStore();
 	const { mutate } = useMutation({
 		fn: create,
 		onSuccess: (result) => {
-			router.push({ pathname: "/home/music/timer", params: { id: result.id } });
+			if (!result) {
+				Toast.show({
+					type: ALERT_TYPE.DANGER,
+					title: "Erro",
+					textBody: "Error ao cadastrar, tente novamente mais tarde",
+				});
+
+				return;
+			}
+			router.push({
+				pathname: "/home/practice_records/timer",
+				params: { id: result },
+			});
 		},
 		onError: (err) => {
 			Toast.show({
@@ -57,20 +67,28 @@ export default function Index() {
 		}
 
 		if (isNewable) {
-			const instrument = await createInstrument({ name: instrumentText });
+			const instrumentId = await createInstrument({ name: instrumentText });
+			if (!instrumentId) {
+				Toast.show({
+					type: ALERT_TYPE.DANGER,
+					title: "Error",
+					textBody: "Erro ao criar instrumento, tente novamente mais tarde",
+				});
+				return;
+			}
 			return mutate({
-				idInstrument: instrument.id,
+				instrument_id: instrumentId,
 				observation,
 				status: "pendent",
-				startDate: new Date(),
+				start_date: new Date(),
 			});
 		}
 
 		return mutate({
-			idInstrument: Number(instrument),
+			instrument_id: Number(instrument),
 			observation,
 			status: "pendent",
-			startDate: new Date(),
+			start_date: new Date(),
 		});
 	}
 

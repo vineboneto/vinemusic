@@ -1,3 +1,4 @@
+import React from "react";
 import { useTheme } from "@/hooks/useTheme";
 import Feather from "@expo/vector-icons/Feather";
 import { Tabs } from "expo-router/tabs";

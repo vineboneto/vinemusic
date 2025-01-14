@@ -1,8 +1,9 @@
+import React from "react";
 import header from "@/components/header";
 import { useTheme } from "@/hooks/useTheme";
 import { Stack } from "expo-router/stack";
 import { StatusBar } from "expo-status-bar";
-import { Pressable, Text } from "react-native";
+import { Pressable } from "react-native";
 
 export default function StackLayout() {
 	const { ColorTheme, theme } = useTheme();

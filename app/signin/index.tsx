@@ -27,7 +27,9 @@ export default function Index() {
 
 			if (oAuthFlow.authSessionResult?.type === "success") {
 				if (oAuthFlow.setActive) {
-					await oAuthFlow.setActive({ session: oAuthFlow.createdSessionId });
+					await oAuthFlow.setActive({
+						session: oAuthFlow.createdSessionId,
+					});
 				}
 			} else {
 				setIsLoading(false);

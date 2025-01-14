@@ -1,9 +1,10 @@
+import React from "react";
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { Loading } from "@/components/loading";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
-import { useMusicStore } from "@/hooks/useMusicStore";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { useTheme } from "@/hooks/useTheme";
 import { formatDate, formatTime } from "@/utils";
 import { date } from "@/utils/date";
@@ -51,7 +52,7 @@ export default function Index() {
 	const { ColorTheme } = useTheme();
 	const [visible, setVisible] = useState(false);
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const { fetchById, deleteById } = useMusicStore();
+	const { fetchById, deleteById } = usePracticeStore();
 	const { data, isUndefined, isLoading, isError, error } = useQuery({
 		fn: async () => {
 			if (id) {
@@ -145,7 +146,7 @@ export default function Index() {
 								<Pressable
 									onPress={() =>
 										router.push({
-											pathname: "/home/music/edit",
+											pathname: "/home/practice_records/edit",
 											params: { id: data.id },
 										})
 									}

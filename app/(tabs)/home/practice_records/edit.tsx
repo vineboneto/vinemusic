@@ -7,7 +7,7 @@ import { Textarea } from "@/components/form/textarea";
 import { Loading } from "@/components/loading";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useInstrumentStore } from "@/hooks/useInstrumentStore";
-import { useMusicStore } from "@/hooks/useMusicStore";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { date } from "@/utils/date";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ export default function Index() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { options: fetchOptions, create: createInstrument } =
 		useInstrumentStore();
-	const { fetchById, update } = useMusicStore();
+	const { fetchById, update } = usePracticeStore();
 	const { mutate } = useMutation<
 		unknown,
 		{

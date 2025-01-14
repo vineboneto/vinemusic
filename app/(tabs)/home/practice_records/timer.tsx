@@ -1,7 +1,7 @@
 import { Button } from "@/components/form/button";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
-import { useMusicStore } from "@/hooks/useMusicStore";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { useTheme } from "@/hooks/useTheme";
 import { formatTextWithEllipsis } from "@/utils";
 import { date } from "@/utils/date";
@@ -13,7 +13,7 @@ export default function Index() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { ColorTheme } = useTheme();
 
-	const { finish, deleteById, fetchById } = useMusicStore();
+	const { finish, deleteById, fetchById } = usePracticeStore();
 	const { mutate } = useMutation<"invalid" | "home" | "next" | "wait", Date>({
 		fn: async (endDate: Date) => {
 			if (!id || !data) return "invalid";
@@ -54,7 +54,10 @@ export default function Index() {
 				});
 			}
 			if (result === "next") {
-				router.replace({ pathname: "/home/music/end", params: { id } });
+				router.replace({
+					pathname: "/home/practice_records/end",
+					params: { id },
+				});
 			}
 		},
 		onError: (err) => {

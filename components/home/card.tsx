@@ -83,13 +83,13 @@ export function Card({
 					onPress={() => {
 						if (status === "finish") {
 							return router.push({
-								pathname: "/home/music/view",
+								pathname: "/home/practice_records/view",
 								params: { id },
 							});
 						}
 
 						router.push({
-							pathname: "/home/music/timer",
+							pathname: "/home/practice_records/timer",
 							params: { id },
 						});
 					}}

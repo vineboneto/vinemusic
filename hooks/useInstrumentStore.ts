@@ -1,51 +1,45 @@
-import { db } from "@/db/client";
-import { instrument } from "@/db/schema";
 import { capitalize } from "@/utils";
-import { useUser } from "@clerk/clerk-expo";
-import { eq } from "drizzle-orm";
+import { useSupabaseClient } from "@/utils/superbase";
+
+type Instrument = {
+	id: number;
+	name: string;
+	user_id: string;
+	created_at: Date;
+	updated_at: Date;
+};
+
+const tableName = "instrument";
 
 export function useInstrumentStore() {
-	const { user } = useUser();
+	const createSupabaseClient = useSupabaseClient();
 
-	async function create(
-		values: Omit<typeof instrument.$inferInsert, "id" | "idUser">,
-	) {
-		const data = await db
-			.insert(instrument)
-			.values({
-				...values,
-				idUser: user?.id || "offline",
-				name: values.name.trim().toLowerCase(),
-			})
-			.onConflictDoUpdate({
-				target: instrument.name,
-				set: {
-					name: values.name.trim().toLowerCase(),
-				},
-			})
-			.returning();
-		return data[0];
+	const client = createSupabaseClient();
+
+	async function create({ name }: { name: string }) {
+		const { data } = await client
+			.from(tableName)
+			.insert({ name })
+			.select<"*", Instrument>();
+
+		if (!data) return null;
+		return data[0].id;
 	}
 
 	async function fetch() {
-		try {
-			const data = db
-				.select()
-				.from(instrument)
-				.where(eq(instrument.idUser, user?.id || "offline"))
-				.limit(20)
-				.all();
-			return data.map((e) => ({ ...e, name: capitalize(e.name) }));
-		} catch (err) {
-			return [];
-		}
+		const { data, error } = await client
+			.from(tableName)
+			.select<"*", Instrument>();
+
+		if (error) return [];
+
+		return data;
 	}
 
 	async function options() {
-		return (await fetch()).map((v) => ({
-			value: v.id.toString(),
-			label: v.name,
-		}));
+		const data = await fetch();
+
+		return data.map((v) => ({ value: v.id.toString(), label: v.name }));
 	}
 
 	return {

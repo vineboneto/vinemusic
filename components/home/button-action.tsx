@@ -24,7 +24,7 @@ export function ButtonActionsGroup({ openFilter, openReport, refetch }: Props) {
 		<View style={styles.content}>
 			<Pressable
 				style={styles.button}
-				onPress={() => router.push("/home/music/new")}
+				onPress={() => router.push("/home/practice_records/new")}
 			>
 				<Feather name="plus" size={35} color={ColorTheme.text} />
 			</Pressable>

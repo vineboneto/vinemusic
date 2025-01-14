@@ -1,7 +1,7 @@
 import { Loading } from "@/components/loading";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
-import { useMusicStore } from "@/hooks/useMusicStore";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { useTheme } from "@/hooks/useTheme";
 import { formatTime } from "@/utils";
 import { date } from "@/utils/date";
@@ -27,7 +27,7 @@ export default function Index() {
 	const startDate = new Date(params.startDate);
 	const endDate = new Date(params.endDate);
 
-	const { report } = useMusicStore();
+	const { report } = usePracticeStore();
 
 	const { data, isLoading, isUndefined, isError, error } = useQuery({
 		fn: () => report({ startDate, endDate }),

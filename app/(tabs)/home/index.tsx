@@ -1,13 +1,13 @@
+import React from "react";
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { type DateValue, InputDate } from "@/components/form/date";
 import { Label } from "@/components/form/label";
-import * as FileSystem from "expo-file-system";
 import { ButtonActionsGroup } from "@/components/home/button-action";
 import { Card } from "@/components/home/card";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
-import { useMusicStore } from "@/hooks/useMusicStore";
+import { usePracticeStore } from "@/hooks/usePracticeStore";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -20,6 +20,7 @@ import {
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import { useTheme } from "@/hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
+import { useUser } from "@clerk/clerk-expo";
 
 function Title({ hasValue }: { hasValue: boolean }) {
 	const { ColorTheme } = useTheme();
@@ -35,6 +36,7 @@ function Title({ hasValue }: { hasValue: boolean }) {
 
 export default function Index() {
 	const { ColorTheme, theme } = useTheme();
+	const { user } = useUser();
 	const [visibleSearch, setVisibleSearch] = useState(false);
 	const [visibleReport, setVisibleReport] = useState(false);
 	const [dateInitial, setDateInitial] = useState<DateValue>({
@@ -54,7 +56,7 @@ export default function Index() {
 		open: false,
 	});
 
-	const { fetch } = useMusicStore();
+	const { fetch } = usePracticeStore();
 	const { data, isUndefined, isLoading, refetch } = useQuery({
 		fn: () => fetch({ startDate: dateInitial.date, endDate: dateFinal.date }),
 	});
@@ -73,19 +75,6 @@ export default function Index() {
 		setVisibleSearch(false);
 	};
 
-	const _list = async () => {
-		try {
-			// Caminho para o diretório SQLite
-			const sqliteDirectory = `${FileSystem.documentDirectory}SQLite/`;
-
-			// Listar os arquivos no diretório SQLite
-			const files = await FileSystem.readDirectoryAsync(sqliteDirectory);
-			console.log("Arquivos no diretório SQLite:", files);
-		} catch (error) {
-			console.error("Erro ao listar arquivos no diretório SQLite:", error);
-		}
-	};
-
 	const report = () => {
 		if (!dateInitialReport.date || !dateFinalReport.date) {
 			return Toast.show({
@@ -100,7 +89,7 @@ export default function Index() {
 			});
 		setVisibleReport(false);
 		router.push({
-			pathname: "/home/music/report",
+			pathname: "/home/practice_records/report",
 			params: {
 				startDate: dateInitialReport.date.toISOString(),
 				endDate: dateFinalReport.date.toISOString(),

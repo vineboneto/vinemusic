@@ -1,3 +1,4 @@
+import React from "react";
 import { Font } from "@/constants/Font";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth, useUser } from "@clerk/clerk-expo";
