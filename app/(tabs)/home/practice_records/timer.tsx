@@ -1,4 +1,5 @@
 import { Button } from "@/components/form/button";
+import { Loading } from "@/components/loading";
 import { Font } from "@/constants/Font";
 import { useMutation, useQuery } from "@/hooks/query";
 import { usePracticeStore } from "@/hooks/usePracticeStore";
@@ -6,7 +7,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { formatTextWithEllipsis } from "@/utils";
 import { date } from "@/utils/date";
 import { router, useLocalSearchParams } from "expo-router";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
 export default function Index() {
@@ -18,7 +19,7 @@ export default function Index() {
 		fn: async (endDate: Date) => {
 			if (!id || !data) return "invalid";
 
-			if (date.diffInMinutes(data.startDate, endDate) === 0) {
+			if (date.diffInMinutes(data.start_date, endDate) === 0) {
 				const result = await new Promise<"home" | "wait">((resolve, reject) => {
 					Dialog.show({
 						title: "Deseja continuar?",
@@ -38,7 +39,7 @@ export default function Index() {
 				return result;
 			}
 
-			const totalInMinutes = date.diffInMinutes(data.startDate, endDate);
+			const totalInMinutes = date.diffInMinutes(data.start_date, endDate);
 
 			await finish({ endDate, id: Number(id), totalInMinutes });
 
@@ -69,13 +70,27 @@ export default function Index() {
 		},
 	});
 
-	const { data } = useQuery({
+	const { data, isLoading, isError, error, isUndefined } = useQuery({
 		fn: async () => {
 			if (id) {
 				return fetchById(Number(id));
 			}
+
+			return;
 		},
 	});
+
+	if (isLoading) {
+		return <ActivityIndicator color={ColorTheme.text} size="large" />;
+	}
+
+	if (isError) {
+		return <Text>{error.message}</Text>;
+	}
+
+	if (isUndefined) {
+		return <Text>Data não encontrado</Text>;
+	}
 
 	return (
 		<View
@@ -118,7 +133,7 @@ export default function Index() {
 					}}
 				>
 					Inicio:{" "}
-					{data?.startDate.toLocaleString("pt-BR", {
+					{data.start_date.toLocaleString("pt-BR", {
 						dateStyle: "medium",
 						timeStyle: "short",
 					})}

@@ -1,7 +1,7 @@
 import { date } from "@/utils/date";
 import { useSupabaseClient } from "@/utils/superbase";
 
-type PracticeRecord = {
+type PracticeRecordRow = {
 	id: number;
 	instrument_id: number;
 	observation: string | null;
@@ -13,6 +13,34 @@ type PracticeRecord = {
 	user_id: string;
 };
 
+export type PracticeRecordData = {
+	id: number;
+	observation: string | null;
+	status: "pendent" | "finish";
+	start_date: Date;
+	end_date: Date | null;
+	created_at: Date;
+	updated_at: Date | null;
+	instrument: {
+		id: number;
+		name: string;
+	};
+};
+
+const tableName = "practice_records";
+
+// TODO: Tipar isso
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+function parse(data: any): PracticeRecordData {
+	return {
+		...data,
+		start_date: new Date(data.start_date),
+		end_date: data.end_date ? new Date(data.end_date) : null,
+		created_at: new Date(data.created_at),
+		updated_at: data.updated_at ? new Date(data.updated_at) : null,
+	};
+}
+
 export function usePracticeStore() {
 	const createSupabaseClient = useSupabaseClient();
 
@@ -20,57 +48,62 @@ export function usePracticeStore() {
 
 	async function create(
 		input: Pick<
-			PracticeRecord,
+			PracticeRecordRow,
 			"instrument_id" | "observation" | "start_date" | "status"
 		>,
 	) {
 		const { data, error } = await client
-			.from("practice_records")
+			.from(tableName)
 			.insert(input)
-			.select<"*", PracticeRecord>();
+			.select<"*", PracticeRecordRow>();
 
 		if (error) return null;
 		return data[0].id;
 	}
 
-	async function finish(input: unknown) {}
+	async function finish(input: {
+		totalInMinutes: number;
+		endDate: Date;
+		id: number;
+	}) {
+		const { error, data } = await client
+			.from(tableName)
+			.update({
+				end_date: input.endDate,
+				minutes: input.totalInMinutes,
+				status: "finish",
+			})
+			.eq("id", Number(input.id))
+			.select<"*", PracticeRecordRow>();
+
+		if (error) return null;
+
+		return data;
+	}
 
 	async function update(input: unknown) {
-		// await db
-		// 	.update(practiceRecords)
-		// 	.set({
-		// 		startDate,
-		// 		totalInMinutes,
-		// 		endDate,
-		// 		idInstrument,
-		// 		observation,
-		// 	})
-		// 	.where(and(eq(practiceRecords.id, id)));
 		return null;
 	}
 
-	async function fetchById(id: number) {
-		// try {
-		// 	return db
-		// 		.select({
-		// 			id: practiceRecords.id,
-		// 			observation: practiceRecords.observation,
-		// 			startDate: practiceRecords.startDate,
-		// 			endDate: practiceRecords.endDate,
-		// 			status: practiceRecords.status,
-		// 			instrument: {
-		// 				id: instrument.id,
-		// 				name: instrument.name,
-		// 			},
-		// 		})
-		// 		.from(practiceRecords)
-		// 		.innerJoin(instrument, eq(practiceRecords.idInstrument, instrument.id))
-		// 		.where(and(eq(practiceRecords.id, id)))
-		// 		.get() as PracticeRecordsSchema;
-		// } catch (err) {
-		// 	return;
-		// }
-		return null;
+	async function fetchById(
+		id: number,
+	): Promise<PracticeRecordData | undefined> {
+		const { data, error } = await client
+			.from(tableName)
+			.select(`
+				id,
+				observation,
+				status,
+				minutes,
+				start_date,
+				end_date,
+				created_at,
+				updated_at,
+				instrument ( id, name )
+			`)
+			.eq("id", Number(id));
+		if (error) return;
+		return parse(data[0]) as unknown as PracticeRecordData;
 	}
 
 	async function report({
@@ -112,55 +145,33 @@ export function usePracticeStore() {
 		endDate,
 		startDate,
 	}: { startDate?: Date; endDate?: Date } = {}) {
-		// const statement = db
-		// 	.select({
-		// 		id: practiceRecords.id,
-		// 		observation: Practice.observation,
-		// 		startDate: Practice.startDate,
-		// 		endDate: Practice.endDate,
-		// 		status: Practice.status,
-		// 		instrument: {
-		// 			id: instrument.id,
-		// 			name: instrument.name,
-		// 		},
-		// 	})
-		// 	.from(Practice)
-		// 	.innerJoin(instrument, eq(Practice.idInstrument, instrument.id))
-		// 	.where(
-		// 		and(
-		// 			eq(Practice.idUser, user?.id || "offline"),
-		// 			startDate &&
-		// 				endDate &&
-		// 				between(
-		// 					Practice.startDate,
-		// 					date.start(startDate),
-		// 					date.end(endDate),
-		// 				),
-		// 		),
-		// 	)
-		// 	.orderBy(desc(Practice.createdAt))
-		// 	.limit(20);
+		const { data, error } = await client
+			.from(tableName)
+			.select(`
+				id,
+				observation,
+				status,
+				minutes,
+				start_date,
+				end_date,
+				created_at,
+				updated_at,
+				instrument ( id, name )
+			`)
+			.limit(20);
 
-		// try {
-		// 	return statement.all() as PracticeRecordsSchema[];
-		// } catch (err) {
-		// 	return [];
-		// }
-		return [];
+		if (error) return [];
+		return data.map(parse);
 	}
 
 	async function deleteById(id: number) {
-		// try {
-		// 	return db
-		// 		.delete(Practice)
-		// 		.where(
-		// 			and(eq(Practice.id, id), eq(Practice.idUser, user?.id || "offline")),
-		// 		)
-		// 		.returning();
-		// } catch (err) {
-		// 	return null;
-		// }
-		return null;
+		const { data, error } = await client
+			.from(tableName)
+			.delete()
+			.eq("id", Number(id));
+
+		if (error) return null;
+		return data;
 	}
 
 	return {

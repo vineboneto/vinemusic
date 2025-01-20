@@ -4,14 +4,13 @@ Este aplicativo tem como objetivo registrar atividades de estudo relacionadas a 
 
 ## Dependências
 
-- **Node@20.x**: Runtime Javascript
-- **Expo**: Framework para desenvolvimento de aplicativos móveis utilizando React Native.
-- **SQLite**: Banco de dados local utilizado para armazenar os registros de atividades de estudo.
-- **Clerk**: Serviço de autenticação de usuários, com suporte a login social.
+- **Node@22**
+- **Expo**
+- **Clerk**
+- **Supabase**
 
-## Como Configurar o Projeto
+## Instalar Dependências
 
-### Instalar Dependências
 Para instalar as dependências do projeto, rode o seguinte comando:
 
 ```bash
@@ -34,25 +33,26 @@ A partir do output, você terá as seguintes opções para abrir o app:
 
 Para que o banco de dados SQLite funcione corretamente no Android, é necessário conectar o dispositivo via USB. Siga os passos abaixo:
 
-1.  Ativar Opções de Desenvolvedor e Depuração USB no Android:
-      - No dispositivo Android, vá para "Configurações" > "Sobre o Telefone" e toque repetidamente no "Número da Versão" até que as opções de desenvolvedor sejam ativadas.
-      - Nas opções de desenvolvedor, ative "Depuração USB".
+- Ativar Opções de Desenvolvedor e Depuração USB no Android:
+  - No dispositivo Android, vá para "Configurações" > "Sobre o Telefone" e toque repetidamente no "Número da Versão" até que as opções de desenvolvedor sejam ativadas.
+  - Nas opções de desenvolvedor, ative "Depuração USB".
+- Instalar Android Studio e Configurar ADB:
+  - Faça o download e instale o Android Studio.
+  - Certifique-se de que o ADB (Android Debug Bridge) está configurado corretamente.
+- Verificar Conexão do Dispositivo:
+  - Conecte o dispositivo Android ao computador via cabo USB.
+  - No terminal, execute o seguinte comando para verificar se o dispositivo foi detectado:
 
-2. Instalar Android Studio e Configurar ADB:
-      - Faça o download e instale o Android Studio.
-      - Certifique-se de que o ADB (Android Debug Bridge) está configurado corretamente.
-  
-3. Verificar Conexão do Dispositivo:
-      - Conecte o dispositivo Android ao computador via cabo USB.
-      - No terminal, execute o seguinte comando para verificar se o dispositivo foi detectado:
-      ```bash
-         adb devices
-      ```
-      Isso exibirá uma lista de dispositivos conectados. Se o seu dispositivo aparecer na lista, ele está pronto para ser usado com o SQLite.
-      ```bash
-         List of devices attached
-         R58M1234567	device
-      ```
+   ```bash
+      adb devices
+   ```
+
+   Isso exibirá uma lista de dispositivos conectados. Se o seu dispositivo aparecer na lista, ele está pronto para ser usado com o SQLite.
+
+   ```bash
+      List of devices attached
+      R58M1234567 device
+   ```
 
 ## Configurações do Clerk
 
@@ -78,14 +78,14 @@ Para integrar a autenticação via Clerk ao aplicativo, siga os passos abaixo pa
    - Crie ou edite o arquivo `.env` na raiz do projeto.
    - Cole a chave que foi copiada, seguindo o formato abaixo:
 
-   ```bash
-   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=<Publishable key>
+   ```env
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=<Publishable key>
    ```
-   Certifique-se de substituir <Publishable key> pela chave real que você obteve no painel do Clerk.
+
+   Certifique-se de substituir `<Publishable key>` pela chave real que você obteve no painel do Clerk.
 
 Esses passos configuram a autenticação com Clerk, permitindo que os usuários façam login via Google no aplicativo.
 
-   
 ## Funcionalidades
 
 Este aplicativo oferece as seguintes funcionalidades ao usuário:
@@ -94,16 +94,13 @@ Este aplicativo oferece as seguintes funcionalidades ao usuário:
 - **Consultar o total de minutos estudados no mês**: O aplicativo calcula e exibe o total de minutos estudados ao longo de cada mês, ajudando o usuário a acompanhar seu progresso.
 - **Autenticação via Clerk com suporte a login social (Google)**: O usuário pode se autenticar de forma rápida e segura utilizando a integração com o Clerk, que oferece suporte ao login com Google.
 
-### Funcionalidade Offline
+## Integraçaõ Entre Clerk e Supabase
 
-Após a autenticação inicial, o aplicativo funciona totalmente **offline**, já que todos os dados são armazenados localmente no dispositivo utilizando **SQLite**. Isso significa que:
-- Os registros de estudo e os cálculos de tempo permanecem acessíveis mesmo sem conexão à internet.
-- Os dados são armazenados de forma persistente no próprio dispositivo, garantindo que o usuário possa gerenciar suas atividades de estudo a qualquer momento, independentemente de conectividade.
+Siga os passos descritos aqui para criar as tabelas [https://supabase.com/partners/integrations/clerk](aqui).
 
-Essa abordagem oferece maior praticidade ao usuário, permitindo que ele continue utilizando o aplicativo mesmo em ambientes onde a conexão à internet seja limitada ou indisponível.
+- **TODO:** Passar script de criação de tabelas e políticas
 
 ## Recursos Úteis
 
 - Documentação do Expo: [Expo Documentation](https://docs.expo.dev/)
-- SQLite no Expo: [SQLite Expo](https://docs.expo.dev/versions/latest/sdk/sqlite/)
 - Clerk Authentication: [Clerk Documentation](https://clerk.com/docs)

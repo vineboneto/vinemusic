@@ -21,7 +21,9 @@ export default function Index() {
 	});
 
 	const timeInMinutes =
-		isOk && data.endDate ? date.diffInMinutes(data.startDate, data.endDate) : 0;
+		isOk && data.end_date
+			? date.diffInMinutes(data.start_date, data.end_date)
+			: 0;
 
 	return (
 		<View
@@ -51,7 +53,8 @@ export default function Index() {
 						color: ColorTheme.text,
 					}}
 				>
-					Início: {data?.endDate ? formatDate(data.startDate) : "Carregando..."}
+					Início:{" "}
+					{data?.start_date ? formatDate(data.start_date) : "Carregando..."}
 				</Text>
 				<Text
 					style={{
@@ -60,7 +63,7 @@ export default function Index() {
 						color: ColorTheme.text,
 					}}
 				>
-					Fim: {data?.endDate ? formatDate(data.endDate) : "Carregando..."}
+					Fim: {data?.end_date ? formatDate(data.end_date) : "Carregando..."}
 				</Text>
 			</View>
 			<View

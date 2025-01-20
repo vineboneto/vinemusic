@@ -1,5 +1,5 @@
 import { Font } from "@/constants/Font";
-import type { MusicSchema } from "@/db/schema";
+import type { PracticeRecordData } from "@/hooks/usePracticeStore";
 import { type ThemeValue, useTheme } from "@/hooks/useTheme";
 import { formatText, formatTime } from "@/utils";
 import { date } from "@/utils/date";
@@ -7,11 +7,11 @@ import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
-	item: MusicSchema;
+	item: PracticeRecordData;
 };
 
 export function Card({
-	item: { instrument, observation, id, startDate, endDate, status },
+	item: { instrument, observation, id, start_date, end_date, status },
 }: Props) {
 	const { ColorTheme } = useTheme();
 	const styles = stylesFN(ColorTheme);
@@ -36,7 +36,7 @@ export function Card({
 	}
 
 	const timeInMinutes =
-		endDate && startDate ? date.diffInMinutes(startDate, endDate) : 0;
+		end_date && start_date ? date.diffInMinutes(start_date, end_date) : 0;
 
 	return (
 		<View style={styles.content}>
@@ -61,7 +61,7 @@ export function Card({
 						color: ColorTheme.text,
 					}}
 				>
-					{startDate.toLocaleString("pt-BR", { dateStyle: "long" })}
+					{start_date.toLocaleString("pt-BR", { dateStyle: "long" })}
 				</Text>
 			</View>
 			<Text
