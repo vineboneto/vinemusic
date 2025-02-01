@@ -24,13 +24,13 @@ export default function Index() {
 		endDate: string;
 	}>();
 
-	const startDate = new Date(params.startDate);
-	const endDate = new Date(params.endDate);
+	const start_date = new Date(params.startDate);
+	const end_date = new Date(params.endDate);
 
 	const { report } = usePracticeStore();
 
 	const { data, isLoading, isUndefined, isError, error } = useQuery({
-		fn: () => report({ startDate, endDate }),
+		fn: () => report({ start_date, end_date }),
 	});
 
 	if (isLoading) {
@@ -74,8 +74,8 @@ export default function Index() {
 					color: ColorTheme.text,
 				}}
 			>
-				{format(date.start(startDate, { firstDayMonth: true }))} até{" "}
-				{format(date.end(endDate, { lastDayMonth: true }))}
+				{format(date.start(start_date, { firstDayMonth: true }))} até{" "}
+				{format(date.end(end_date, { lastDayMonth: true }))}
 			</Text>
 			<BarChart
 				height={250}

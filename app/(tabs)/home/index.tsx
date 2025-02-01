@@ -1,4 +1,3 @@
-import React from "react";
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { type DateValue, InputDate } from "@/components/form/date";
@@ -8,7 +7,11 @@ import { Card } from "@/components/home/card";
 import { Font } from "@/constants/Font";
 import { useQuery } from "@/hooks/query";
 import { usePracticeStore } from "@/hooks/usePracticeStore";
+import { useTheme } from "@/hooks/useTheme";
+import { useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { useState } from "react";
 import {
 	ActivityIndicator,
@@ -18,9 +21,6 @@ import {
 	View,
 } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
-import { useTheme } from "@/hooks/useTheme";
-import { StatusBar } from "expo-status-bar";
-import { useUser } from "@clerk/clerk-expo";
 
 function Title({ hasValue }: { hasValue: boolean }) {
 	const { ColorTheme } = useTheme();
@@ -58,7 +58,7 @@ export default function Index() {
 
 	const { fetch } = usePracticeStore();
 	const { data, isUndefined, isLoading, refetch } = useQuery({
-		fn: () => fetch({ startDate: dateInitial.date, endDate: dateFinal.date }),
+		fn: () => fetch({ start_date: dateInitial.date, end_date: dateFinal.date }),
 	});
 
 	const search = () => {

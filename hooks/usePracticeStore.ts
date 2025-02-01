@@ -81,8 +81,19 @@ export function usePracticeStore() {
 		return data;
 	}
 
-	async function update(input: unknown) {
-		return null;
+	async function update({
+		id,
+		...rest
+	}: {
+		id: number;
+		start_date: Date;
+		end_date: Date;
+		observation: string | null;
+		instrument_id: number;
+		minutes: number;
+	}) {
+		const { error } = await client.from(tableName).update(rest).eq("id", id);
+		return error;
 	}
 
 	async function fetchById(
@@ -107,58 +118,65 @@ export function usePracticeStore() {
 	}
 
 	async function report({
-		endDate,
-		startDate,
-	}: { startDate: Date; endDate: Date }) {
-		// const data = db
-		// 	.select({
-		// 		date: practiceRecords.startDate,
-		// 		totalMinutes: sum(Practice.totalInMinutes),
-		// 	})
-		// 	.from(Practice)
-		// 	.groupBy(
-		// 		sql`strftime('%Y-%m', DATETIME(${Practice.startDate} / 1000, 'unixepoch'))`,
-		// 	)
-		// 	.orderBy(
-		// 		sql`strftime('%Y-%m', DATETIME(${Practice.startDate} / 1000, 'unixepoch'))`,
-		// 	)
-		// 	.where(
-		// 		and(
-		// 			gte(
-		// 				Practice.startDate,
-		// 				date.start(startDate, { firstDayMonth: true }),
-		// 			),
-		// 			lte(Practice.startDate, date.end(endDate, { lastDayMonth: true })),
-		// 			eq(Practice.idUser, user?.id || "offline"),
-		// 		),
-		// 	)
-		// 	.all()
-		// 	.map(({ date: d, totalMinutes }) => ({
-		// 		totalMinutes: Number(totalMinutes) || 0,
-		// 		date: date.start(d, { firstDayMonth: true }),
-		// 	}));
+		end_date,
+		start_date,
+	}: { start_date: Date; end_date: Date }) {
+		const { data, error } = await client
+			.from("report")
+			.select(`
+					*
+    	`)
+			.gte(
+				"month",
+				date
+					.start(start_date, { firstDayMonth: true, utc: true })
+					.toISOString(),
+			)
+			.lte(
+				"month",
+				date.end(end_date, { lastDayMonth: true, utc: true }).toISOString(),
+			)
+			.order("month", { ascending: true });
 
-		return { totalMinutes: 0, date: new Date() };
+		if (error) {
+			return [];
+		}
+		return data.map(
+			(data: { month: string; year: string; minutes: number }) => ({
+				totalMinutes: Number(data.minutes) || 0,
+				date: date.start(date.fromUTC(data.month), { firstDayMonth: true }),
+			}),
+		);
 	}
 
 	async function fetch({
-		endDate,
-		startDate,
-	}: { startDate?: Date; endDate?: Date } = {}) {
-		const { data, error } = await client
+		end_date,
+		start_date,
+	}: { start_date?: Date; end_date?: Date } = {}) {
+		const promiseSearch = client
 			.from(tableName)
 			.select(`
-				id,
-				observation,
-				status,
-				minutes,
-				start_date,
-				end_date,
-				created_at,
-				updated_at,
-				instrument ( id, name )
-			`)
+			id,
+			observation,
+			status,
+			minutes,
+			start_date,
+			end_date,
+			created_at,
+			updated_at,
+			instrument ( id, name )
+		`)
 			.limit(20);
+
+		if (start_date) {
+			promiseSearch.gte("start_date", date.start(start_date).toISOString());
+		}
+
+		if (end_date) {
+			promiseSearch.lte("end_date", date.end(end_date).toISOString());
+		}
+
+		const { data, error } = await promiseSearch;
 
 		if (error) return [];
 		return data.map(parse);

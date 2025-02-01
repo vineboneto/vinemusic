@@ -8,13 +8,16 @@ import { Loading } from "@/components/loading";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useInstrumentStore } from "@/hooks/useInstrumentStore";
 import { usePracticeStore } from "@/hooks/usePracticeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { date } from "@/utils/date";
+import Feather from "@expo/vector-icons/Feather";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function Index() {
+	const { ColorTheme } = useTheme();
 	const [instrument, setInstrument] = useState<string | null>(null);
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");
@@ -42,16 +45,16 @@ export default function Index() {
 	const { mutate } = useMutation<
 		unknown,
 		{
-			startDate: Date;
-			endDate: Date;
+			start_date: Date;
+			end_date: Date;
 			observation: string | null;
-			idInstrument: number;
+			instrument_id: number;
 			id: number;
 		}
 	>({
 		fn: async (data) => {
-			const totalInMinutes = date.diffInMinutes(data.startDate, data.endDate);
-			await update({ ...data, totalInMinutes });
+			const minutes = date.diffInMinutes(data.start_date, data.end_date);
+			await update({ ...data, minutes });
 		},
 		onSuccess: () => {
 			Toast.show({
@@ -85,10 +88,10 @@ export default function Index() {
 		if (isOk) {
 			setInstrument(data.instrument.id.toString());
 			setObservation(data.observation || "");
-			setDateInitial({ date: data.startDate, open: false });
-			setDateFinal({ date: data.endDate || undefined, open: false });
-			setTimeInitial({ date: data.startDate, open: false });
-			setTimeFinal({ date: data.endDate || undefined, open: false });
+			setDateInitial({ date: data.start_date, open: false });
+			setDateFinal({ date: data.end_date || undefined, open: false });
+			setTimeInitial({ date: data.start_date, open: false });
+			setTimeFinal({ date: data.end_date || undefined, open: false });
 		}
 	}, [isOk]);
 
@@ -141,10 +144,10 @@ export default function Index() {
 			return;
 		}
 
-		const startDate = date.combineDateTime(dateInitial.date, timeInitial.date);
-		const endDate = date.combineDateTime(dateFinal.date, timeFinal.date);
+		const start_date = date.combineDateTime(dateInitial.date, timeInitial.date);
+		const end_date = date.combineDateTime(dateFinal.date, timeFinal.date);
 
-		if (startDate.getTime() > endDate.getTime()) {
+		if (start_date.getTime() > end_date.getTime()) {
 			Toast.show({
 				type: ALERT_TYPE.DANGER,
 				title: "Validação",
@@ -154,21 +157,29 @@ export default function Index() {
 		}
 
 		if (isNewable) {
-			const instrument = await createInstrument({ name: instrumentText });
+			const instrumentId = await createInstrument({ name: instrumentText });
+			if (!instrumentId) {
+				Toast.show({
+					type: ALERT_TYPE.DANGER,
+					title: "Validação",
+					textBody: "Erro ao definir instrumento",
+				});
+				return;
+			}
 			return mutate({
-				idInstrument: instrument.id,
+				instrument_id: instrumentId,
 				observation,
-				startDate,
-				endDate,
+				start_date,
+				end_date,
 				id: Number(id),
 			});
 		}
 
 		return mutate({
-			idInstrument: Number(instrument),
+			instrument_id: Number(instrument),
 			observation,
-			startDate,
-			endDate,
+			start_date,
+			end_date,
 			id: Number(id),
 		});
 	};
@@ -184,11 +195,19 @@ export default function Index() {
 			<View>
 				<Label>Instrumento</Label>
 				{instrument === "newable" ? (
-					<Input
-						placeholder="Digite o Novo Instrumento"
-						value={instrumentText}
-						onChangeText={(e) => setInstrumentText(e)}
-					/>
+					<View style={{ position: "relative" }}>
+						<Input
+							placeholder="Digite o Novo Instrumento"
+							value={instrumentText}
+							onChangeText={(e) => setInstrumentText(e)}
+						/>
+						<Pressable
+							style={{ position: "absolute", right: 10, top: 15 }}
+							onPress={() => setInstrument(null)}
+						>
+							<Feather name="x" size={28} color={ColorTheme.text} />
+						</Pressable>
+					</View>
 				) : (
 					<Select
 						newable

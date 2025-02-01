@@ -1,4 +1,3 @@
-import React from "react";
 import { Anchor } from "@/components/anchor";
 import { Button } from "@/components/form/button";
 import { Loading } from "@/components/loading";
@@ -11,6 +10,7 @@ import { date } from "@/utils/date";
 import Feather from "@expo/vector-icons/Feather";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
@@ -93,8 +93,8 @@ export default function Index() {
 		return <Text>Data não encontrado</Text>;
 	}
 
-	const timeInMinutes = data.endDate
-		? date.diffInMinutes(data.startDate, data.endDate)
+	const timeInMinutes = data.end_date
+		? date.diffInMinutes(data.start_date, data.end_date)
 		: 0;
 
 	return (
@@ -161,9 +161,9 @@ export default function Index() {
 						</View>
 					</View>
 					<GroupText title="Instrumento" description={data.instrument.name} />
-					<GroupText title="Inicio" description={formatDate(data.startDate)} />
-					{data.endDate && (
-						<GroupText title="Fim" description={formatDate(data.endDate)} />
+					<GroupText title="Inicio" description={formatDate(data.start_date)} />
+					{data.end_date && (
+						<GroupText title="Fim" description={formatDate(data.end_date)} />
 					)}
 					<View
 						style={{

@@ -19,21 +19,44 @@ export const date = {
 		); // Define horas, minutos, segundos e milissegundos
 		return combinedDate;
 	},
-	start: (date: Date, { firstDayMonth = false } = {}) => {
+	fromUTC: (date: Date | string, hours = 3) => {
+		const fuso = new Date(date);
+		fuso.setHours(fuso.getHours() + hours);
+		return fuso;
+	},
+	start: (date: Date, { firstDayMonth = false, utc = false } = {}) => {
 		const startOfDay = new Date(date);
 		if (firstDayMonth) {
-			startOfDay.setDate(1);
+			if (utc) {
+				startOfDay.setUTCDate(1);
+			} else {
+				startOfDay.setDate(1);
+			}
 		}
-		startOfDay.setHours(0, 0, 0, 0);
+
+		if (utc) {
+			startOfDay.setUTCHours(0, 0, 0, 0);
+		} else {
+			startOfDay.setHours(0, 0, 0, 0);
+		}
 		return startOfDay;
 	},
-	end: (date: Date, { lastDayMonth = false } = {}) => {
+	end: (date: Date, { lastDayMonth = false, utc = false } = {}) => {
 		const endOfDay = new Date(date);
 		if (lastDayMonth) {
-			endOfDay.setMonth(endOfDay.getMonth() + 1);
-			endOfDay.setDate(0);
+			if (utc) {
+				endOfDay.setUTCMonth(endOfDay.getMonth() + 1);
+				endOfDay.setUTCDate(0);
+			} else {
+				endOfDay.setMonth(endOfDay.getMonth() + 1);
+				endOfDay.setDate(0);
+			}
 		}
-		endOfDay.setHours(23, 59, 59, 999);
+		if (utc) {
+			endOfDay.setUTCHours(23, 59, 59, 999);
+		} else {
+			endOfDay.setHours(23, 59, 59, 999);
+		}
 		return endOfDay;
 	},
 };

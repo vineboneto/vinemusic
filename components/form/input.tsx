@@ -15,6 +15,7 @@ export function Input({ ...rest }: ComponentProps<typeof TextInput>) {
 				padding: 10,
 				color: ColorTheme.text,
 				borderRadius: 8,
+				height: 55,
 			}}
 			{...rest}
 		/>

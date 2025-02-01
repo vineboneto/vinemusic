@@ -1,7 +1,6 @@
 import { useTheme } from "@/hooks/useTheme";
 import { Picker } from "@react-native-picker/picker";
 import { Pressable } from "react-native";
-
 type Props = {
 	value: string | null;
 	newable?: boolean;

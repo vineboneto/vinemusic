@@ -5,12 +5,15 @@ import { Textarea } from "@/components/form/textarea";
 import { useMutation, useQuery } from "@/hooks/query";
 import { useInstrumentStore } from "@/hooks/useInstrumentStore";
 import { usePracticeStore } from "@/hooks/usePracticeStore";
+import { useTheme } from "@/hooks/useTheme";
+import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function Index() {
+	const { ColorTheme } = useTheme();
 	const [instrument, setInstrument] = useState<string | null>(null);
 	const [instrumentText, setInstrumentText] = useState<string>("");
 	const [observation, setObservation] = useState<string>("");
@@ -102,11 +105,19 @@ export default function Index() {
 			}}
 		>
 			{instrument === "newable" ? (
-				<Input
-					placeholder="Digite o Novo Instrumento"
-					value={instrumentText}
-					onChangeText={(e) => setInstrumentText(e)}
-				/>
+				<View style={{ position: "relative" }}>
+					<Input
+						placeholder="Digite o Novo Instrumento"
+						value={instrumentText}
+						onChangeText={(e) => setInstrumentText(e)}
+					/>
+					<Pressable
+						style={{ position: "absolute", right: 10, top: 15 }}
+						onPress={() => setInstrument(null)}
+					>
+						<Feather name="x" size={28} color={ColorTheme.text} />
+					</Pressable>
+				</View>
 			) : (
 				<Select
 					newable
