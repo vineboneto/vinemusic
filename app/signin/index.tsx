@@ -2,12 +2,12 @@ import { Button } from "@/components/form/button";
 import { Title } from "@/components/signin/title";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import { useTheme } from "@/hooks/useTheme";
+import { useOAuth } from "@clerk/clerk-expo";
+import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { useOAuth } from "@clerk/clerk-expo";
-import * as WebBrowser from "expo-web-browser";
-import * as Linking from "expo-linking";
-import { useTheme } from "@/hooks/useTheme";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -24,6 +24,7 @@ export default function Index() {
 			const redirectUrl = Linking.createURL("/");
 
 			const oAuthFlow = await googleOAuth.startOAuthFlow({ redirectUrl });
+			console.log("aqui");
 
 			if (oAuthFlow.authSessionResult?.type === "success") {
 				if (oAuthFlow.setActive) {
@@ -36,7 +37,6 @@ export default function Index() {
 			}
 		} catch (err) {
 			setIsLoading(false);
-			console.error(err);
 		}
 	}
 
