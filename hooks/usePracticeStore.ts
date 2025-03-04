@@ -117,36 +117,34 @@ export function usePracticeStore() {
 		return parse(data[0]) as unknown as PracticeRecordData;
 	}
 
+	type ReportRPC = {
+		minutes: string;
+		month: string; // Date
+		year: string; // Date
+	};
+
+	type Report = {
+		totalMinutes: number;
+		date: Date;
+	};
+
 	async function report({
 		end_date,
 		start_date,
-	}: { start_date: Date; end_date: Date }) {
-		const { data, error } = await client
-			.from("report")
-			.select(`
-					*
-    	`)
-			.gte(
-				"month",
-				date
-					.start(start_date, { firstDayMonth: true, utc: true })
-					.toISOString(),
-			)
-			.lte(
-				"month",
-				date.end(end_date, { lastDayMonth: true, utc: true }).toISOString(),
-			)
-			.order("month", { ascending: true });
+	}: { start_date: Date; end_date: Date }): Promise<Report[]> {
+		const { data, error } = await client.rpc("get_practice_summary", {
+			p_start_date: date.start(start_date), // Exemplo: '2024-01-01'
+			p_end_date: date.end(end_date), // Exemplo: '2024-12-31'
+		});
 
 		if (error) {
 			return [];
 		}
-		return data.map(
-			(data: { month: string; year: string; minutes: number }) => ({
-				totalMinutes: Number(data.minutes) || 0,
-				date: date.start(date.fromUTC(data.month), { firstDayMonth: true }),
-			}),
-		);
+
+		return (data as ReportRPC[]).map((data) => ({
+			totalMinutes: Number(data.minutes) || 0,
+			date: date.start(date.fromUTC(data.month), { firstDayMonth: true }),
+		}));
 	}
 
 	async function fetch({

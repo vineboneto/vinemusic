@@ -17,9 +17,11 @@ export default function Index() {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const { startSSOFlow } = useSSO();
+	const [error, setError] = useState("");
 
 	async function onGoogleSign() {
 		try {
+			setError("");
 			setIsLoading(true);
 
 			const redirectUrl = AuthSession.makeRedirectUri({
@@ -27,19 +29,19 @@ export default function Index() {
 				path: "sso-callback",
 			});
 
-			await new Promise((resolve) => {
-				Alert.alert("Confirm", `${redirectUrl}`, [
-					{
-						text: "OK",
-						onPress: () => resolve(true),
-					},
-					{
-						text: "Cancel",
-						onPress: () => resolve(false),
-						style: "cancel",
-					},
-				]);
-			});
+			// await new Promise((resolve) => {
+			// 	Alert.alert("Confirm", `${redirectUrl}`, [
+			// 		{
+			// 			text: "OK",
+			// 			onPress: () => resolve(true),
+			// 		},
+			// 		{
+			// 			text: "Cancel",
+			// 			onPress: () => resolve(false),
+			// 			style: "cancel",
+			// 		},
+			// 	]);
+			// });
 
 			const { createdSessionId, setActive, signIn, signUp } =
 				await startSSOFlow({
@@ -55,21 +57,9 @@ export default function Index() {
 				setIsLoading(false);
 			}
 		} catch (err) {
+			setError((err as Error).message);
 			setIsLoading(false);
 			console.error(JSON.stringify(err, null, 2));
-			await new Promise((resolve) => {
-				Alert.alert("Confirm", `${(err as Error).message}`, [
-					{
-						text: "OK",
-						onPress: () => resolve(true),
-					},
-					{
-						text: "Cancel",
-						onPress: () => resolve(false),
-						style: "cancel",
-					},
-				]);
-			});
 		}
 	}
 

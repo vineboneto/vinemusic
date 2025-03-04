@@ -17,12 +17,15 @@ export function useInstrumentStore() {
 	const client = createSupabaseClient();
 
 	async function create({ name }: { name: string }) {
-		const { data } = await client
+		const { data, error } = await client
 			.from(tableName)
 			.insert({ name })
 			.select<"*", Instrument>();
 
-		if (!data) return null;
+		if (!data) {
+			console.log({ error });
+			return null;
+		}
 		return data[0].id;
 	}
 
